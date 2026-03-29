@@ -3,181 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>المصيبه | شات التفاعل الحي</title>
+    <title>المصيبه | شات الفخامة الإدارية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        :root {
-            --bg: #0b0e14;
-            --card-bg: #161b22;
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --text: #e6edf3;
-            --gold: #f1c40f;
-        }
-
+        :root { --bg: #0b0e14; --card-bg: #161b22; --primary: #6c5ce7; --gold: #f1c40f; --text: #e6edf3; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); height: 100vh; color: var(--text); overflow: hidden; display: flex; flex-direction: column; }
 
-        body {
-            font-family: 'Tajawal', sans-serif; background: var(--bg);
-            height: 100vh; display: flex; flex-direction: column;
-            color: var(--text); overflow: hidden;
+        /* --- اللودر الخاص بك (Splash) --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #1e1b40 0%, #0f0c29 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000000; transition: opacity 0.8s ease;
         }
+        .splash-logo { width: 80%; max-width: 300px; animation: pulse 2s infinite; }
+        .splash-loader-bar { width: 60%; max-width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 20px; margin-top: 30px; overflow: hidden; }
+        .splash-progress { width: 0%; height: 100%; background: linear-gradient(90deg, #a29bfe, #6c5ce7); animation: splashLoad 3s forwards linear; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes splashLoad { 0% { width: 0%; } 100% { width: 100%; } }
 
-        /* --- الهيدر (ثابت فوق) --- */
-        header {
-            padding: 15px 20px; background: rgba(22, 27, 34, 0.8);
-            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: space-between; z-index: 100;
+        /* --- واجهة الشات --- */
+        header { padding: 15px 20px; background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+        header h1 { font-size: 1.2rem; font-weight: 900; color: var(--gold); }
+        
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; padding-bottom: 100px; }
+        .message { max-width: 85%; padding: 10px 15px; border-radius: 18px; font-size: 0.95rem; animation: fadeIn 0.3s ease; position: relative; }
+        .msg-me { align-self: flex-start; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+        .msg-other { align-self: flex-end; background: var(--card-bg); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        /* --- فقاعة الأدمن (قصي) --- */
+        .msg-admin {
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.15);
+            animation: adminGlow 2s infinite alternate;
         }
-        header h1 { font-size: 1.2rem; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
-        .status-dot { width: 8px; height: 8px; background: #238636; border-radius: 50%; box-shadow: 0 0 10px #238636; }
-
-        /* --- منطقة الرسائل (قابلة للتمرير) --- */
-        #chat-box {
-            flex: 1; overflow-y: auto; padding: 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            scroll-behavior: smooth; padding-bottom: 100px; /* مساحة للبوكس الثابت */
-        }
-
-        .message {
-            max-width: 85%; padding: 12px 16px; border-radius: 20px;
-            font-size: 0.95rem; line-height: 1.4; position: relative;
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* رسائلي */
-        .msg-me {
-            align-self: flex-start; background: var(--primary);
-            color: #fff; border-bottom-right-radius: 4px;
-        }
-
-        /* رسائل الآخرين */
-        .msg-other {
-            align-self: flex-end; background: var(--card-bg);
-            color: var(--text); border-bottom-left-radius: 4px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        @keyframes adminGlow { from { box-shadow: 0 0 10px rgba(241, 196, 15, 0.1); } to { box-shadow: 0 0 20px rgba(241, 196, 15, 0.3); } }
 
         .msg-info { font-size: 10px; opacity: 0.6; margin-bottom: 4px; display: block; }
+        
+        /* --- اسم قصي اللامع والمتحرك (تاج ذهبي) --- */
+        .admin-name {
+            color: var(--gold);
+            font-weight: 900;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            animation: adminWiggle 3s infinite ease-in-out;
+            overflow: hidden; /* لللمعان */
+        }
+        /* التاج الذهبي */
+        .admin-name::before { content: '👑'; font-size: 12px; margin-right: 2px; }
 
-        /* --- بوكس النص (ثابت تحت) --- */
-        .input-container {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            padding: 15px 20px 30px 20px; /* زيادة مساحة للموبايلات الحديثة */
-            background: linear-gradient(to top, var(--bg) 80%, transparent);
-            display: flex; gap: 10px; align-items: center; z-index: 100;
+        /* تأثير اللمعان المتحرك على الاسم */
+        .admin-name::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: nameShine 4s infinite linear;
         }
 
-        .input-wrapper {
-            flex: 1; position: relative; display: flex; align-items: center;
-        }
+        @keyframes nameShine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
+        @keyframes adminWiggle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
 
-        #userMsg {
-            width: 100%; padding: 14px 20px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg);
-            color: #fff; outline: none; font-family: 'Tajawal'; font-size: 1rem;
-            transition: 0.3s;
-        }
-        #userMsg:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(108, 92, 231, 0.2); }
+        /* أزرار الإدارة (تظهر لقصي فقط) */
+        .admin-tools { font-size: 11px; margin-top: 5px; color: var(--gold); cursor: pointer; text-decoration: underline; }
 
-        .send-btn {
-            width: 50px; height: 50px; border-radius: 50%;
-            background: var(--primary); color: #fff; border: none;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
-        }
-        .send-btn:active { transform: scale(0.9); }
+        /* بوكس النص الثابت */
+        .input-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px 30px; background: linear-gradient(to top, var(--bg) 80%, transparent); display: flex; gap: 10px; z-index: 100; }
+        #userMsg { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color: #fff; outline: none; font-family: 'Tajawal'; }
+        .send-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="status-dot"></div>
-            <h1>المصيبه شات</h1>
-        </div>
-        <p style="font-size: 10px; opacity: 0.5;">قصي الفلسطيني &copy;</p>
-    </header>
-
-    <div id="chat-box">
-        <div class="message msg-other">
-            <span class="msg-info">النظام</span>
-            أهلاً بك في مساحة المصيبة.. عبّر عن رأيك بكل رقي ✨
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="shaqi.png" alt="AL-MOSIBA" class="splash-logo">
+            <div class="splash-loader-bar"><div class="splash-progress"></div></div>
+            <p style="color:#fff; margin-top:15px; font-size: 12px; opacity: 0.7;">بانتظار عالمك الجميل...</p>
         </div>
     </div>
 
-    <div class="input-container">
-        <div class="input-wrapper">
-            <input type="text" id="userMsg" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+    <header>
+        <h1>المصيبه شات</h1>
+        <div id="admin-actions" style="display: none;">
+            <button onclick="clearChat()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:8px; font-size:10px;">مسح الشات 🗑️</button>
         </div>
-        <button class="send-btn" onclick="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
-        </button>
+    </header>
+
+    <div id="chat-box"></div>
+
+    <div class="input-container">
+        <input type="text" id="userMsg" placeholder="اكتب رسالتك..." autocomplete="off">
+        <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
     </div>
 
     <script>
-        // تعريف المستخدم (UUID عشوائي لكل جلسة)
-        const myId = "user_" + Math.random().toString(16).slice(2);
-        
-        // إعداد PubNub (نفس القناة التفاعلية)
-        const pubnub = new PubNub({
-            publishKey: 'demo', 
-            subscribeKey: 'demo',
-            uuid: myId
-        });
+        let myName = "";
+        let isAdmin = false;
+        const myId = "u_" + Math.random().toString(16).slice(2);
 
-        pubnub.subscribe({ channels: ['mosiba_chat_v2'] });
+        const pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', uuid: myId });
+        pubnub.subscribe({ channels: ['mosiba_pro_chat_v3'] });
 
-        // استقبال الرسائل
+        // استقبال الرسائل والأوامر
         pubnub.addListener({
             message: function(s) {
-                renderMessage(s.message.text, s.publisher);
+                if(s.message.type === "clear") {
+                    document.getElementById('chat-box').innerHTML = '<p style="text-align:center; opacity:0.3; font-size:12px;">تم تنظيف الشات بواسطة الإدارة ✨</p>';
+                } else if (s.message.type === "kick" && s.message.targetId === myId) {
+                    document.body.innerHTML = "<div style='height:100vh; display:flex; align-items:center; justify-content:center; background:#0b0e14; color:white; font-family:Tajawal; text-align:center;'><h1>تم طردك من الشات 🚫</h1><p style='font-size:12px; opacity:0.5; margin-top:10px;'>بواسطة قصي الفلسطيني</p></div>";
+                } else if (s.message.text) {
+                    renderMessage(s.message.text, s.message.user, s.publisher);
+                }
             }
         });
 
-        function sendMessage() {
-            const input = document.getElementById('userMsg');
-            const text = input.value.trim();
-
-            if(!text) return;
-
-            pubnub.publish({
-                channel: 'mosiba_chat_v2',
-                message: { text: text }
+        // نظام تسجيل الدخول (صندوق الاسم)
+        async function login() {
+            const { value: name } = await Swal.fire({
+                title: 'مرحباً بك في المصيبة',
+                input: 'text',
+                inputLabel: 'يرجى كتابة اسمك بلطف',
+                inputPlaceholder: 'اسمك هنا...',
+                confirmButtonText: 'دخول',
+                allowOutsideClick: false,
+                background: '#161b22',
+                color: '#fff',
+                confirmButtonColor: '#6c5ce7'
             });
 
+            if (name === "قصي") {
+                const { value: pass } = await Swal.fire({
+                    title: 'تأكيد الهوية',
+                    input: 'password',
+                    inputLabel: 'كلمة السر للإدارة',
+                    confirmButtonText: 'تأكيد',
+                    background: '#161b22',
+                    color: '#fff',
+                    confirmButtonColor: '#f1c40f'
+                });
+                if (pass === "159159") {
+                    isAdmin = true;
+                    myName = "قصي"; // الاسم مجرد، التمييز بالكود
+                    document.getElementById('admin-actions').style.display = 'block';
+                } else {
+                    Swal.fire('خطأ', 'كلمة السر غلط يا غالي', 'error');
+                    return login();
+                }
+            } else {
+                myName = name || "مشارك مجهول";
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userMsg');
+            if(!input.value.trim()) return;
+            pubnub.publish({ channel: 'mosiba_pro_chat_v3', message: { text: input.value, user: myName } });
             input.value = '';
-            input.focus();
         }
 
-        function renderMessage(text, senderId) {
-            const chatBox = document.getElementById('chat-box');
-            const msgDiv = document.createElement('div');
-            
-            // تحديد إذا كانت الرسالة لي أو لشخص آخر
+        function renderMessage(text, user, senderId) {
+            const box = document.getElementById('chat-box');
+            const div = document.createElement('div');
             const isMe = (senderId === myId);
-            msgDiv.className = `message ${isMe ? 'msg-me' : 'msg-other'}`;
             
-            const senderName = isMe ? "أنا" : "مشارك";
-            msgDiv.innerHTML = `<span class="msg-info">${senderName}</span>${text}`;
+            // تمييز اسم ورسالة قصي (الأدمن)
+            const isMsgAdmin = (user === "قصي");
             
-            chatBox.appendChild(msgDiv);
+            div.className = `message ${isMe ? 'msg-me' : 'msg-other'} ${isMsgAdmin ? 'msg-admin' : ''}`;
             
-            // النزول لآخر رسالة تلقائياً
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // تنسيق اسم المستخدم (تمييز الأدمن بالكود)
+            let nameSpan = `<span class="msg-info">${user}</span>`;
+            if (isMsgAdmin) {
+                nameSpan = `<span class="msg-info admin-name">قصي</span>`; // تنسيق ذهبي، تاج، ولمعان
+            }
+            
+            div.innerHTML = `${nameSpan}${text}`;
+            
+            // إضافة زر الطرد لقصي فقط
+            if(isAdmin && !isMe) {
+                div.innerHTML += `<div class="admin-tools" onclick="kickUser('${senderId}')">طرد 🚫</div>`;
+            }
+
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
         }
 
-        // إرسال بالضغط على Enter
-        document.getElementById('userMsg').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendMessage();
-        });
+        // أوامر الإدارة
+        function clearChat() {
+            if(isAdmin) pubnub.publish({ channel: 'mosiba_pro_chat_v3', message: { type: "clear" } });
+        }
+
+        function kickUser(id) {
+            if(isAdmin) pubnub.publish({ channel: 'mosiba_pro_chat_v3', message: { type: "kick", targetId: id } });
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                const s = document.getElementById('splash-screen');
+                if(s) {
+                    s.style.opacity = '0';
+                    setTimeout(() => { s.remove(); login(); }, 800);
+                }
+            }, 3000);
+        };
+
+        document.getElementById('userMsg').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
     </script>
 </body>
 </html>
