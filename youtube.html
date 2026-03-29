@@ -10,7 +10,7 @@
         body {
             margin: 0;
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(-45deg, #ff4b2b, #ff416c, #23a6d5, #23d5ab);
+            background: linear-gradient(-45deg, #1e1b40, #ff416c, #23a6d5, #0f0c29);
             background-size: 400% 400%;
             animation: gradient 15s ease infinite;
             height: 100vh;
@@ -28,123 +28,116 @@
         }
 
         .main-card {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 35px;
             padding: 40px 25px;
             width: 90%;
             max-width: 420px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
-        h1 { font-size: 2.5rem; margin: 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
-        .description { font-size: 1.1rem; margin-bottom: 30px; font-weight: 600; opacity: 0.9; }
+        h1 { font-size: 2.8rem; margin: 0; font-weight: 900; text-shadow: 0 5px 15px rgba(0,0,0,0.3); color: #fff; }
+        .description { font-size: 1rem; margin-bottom: 30px; font-weight: 600; color: #a29bfe; }
 
         input {
             width: 100%;
-            padding: 18px;
+            padding: 20px;
             border-radius: 20px;
-            border: none;
-            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
             box-sizing: border-box;
             outline: none;
             text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #333;
+            font-weight: bold;
+            transition: 0.3s;
         }
+        
+        input:focus { border-color: #ff416c; box-shadow: 0 0 15px rgba(255, 65, 108, 0.4); }
 
         .btn-fetch {
-            background: #fff;
-            color: #ff416c;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: #fff;
             border: none;
-            padding: 18px;
+            padding: 20px;
             border-radius: 20px;
             width: 100%;
             font-weight: 800;
             font-size: 1.2rem;
             cursor: pointer;
             transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 65, 108, 0.3);
         }
 
-        .results { display: none; margin-top: 30px; animation: slideUp 0.6s ease; }
-        
-        .dl-btn {
-            display: block;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 15px;
-            text-decoration: none;
-            font-weight: bold;
-            color: #fff;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            width: 100%;
-        }
+        .btn-fetch:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255, 65, 108, 0.5); }
+        .btn-fetch:disabled { background: #666; cursor: not-allowed; transform: none; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .footer-text { margin-top: 25px; font-size: 0.8rem; opacity: 0.6; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h1>AL-MOSIBA</h1>
-    <p class="description">تحويل فيديوهات يوتيوب إلى MP3 🎵</p>
+    <h1>المصيبة</h1>
+    <p class="description">أسرع محول يوتيوب إلى MP3 🎵</p>
     
-    <input type="text" id="youtubeUrl" placeholder="ضع رابط اليوتيوب هنا...">
-    <button class="btn-fetch" onclick="convertYoutube()">تحويل الآن 🔥</button>
+    <input type="text" id="youtubeUrl" placeholder="انسخ رابط الفيديو هون...">
+    <button class="btn-fetch" id="convertBtn" onclick="convertYoutube()">تحميل الأغنية فوراً 🔥</button>
 
-    <div id="results" class="results">
-        <p id="videoTitle" style="font-size: 0.9rem; margin-bottom: 15px; font-weight: bold;"></p>
-        <button class="dl-btn" id="downloadBtn">📥 تحميل الملف (MP3)</button>
-    </div>
+    <p class="footer-text">قوة قصي الفلسطيني 🇵🇸 2026</p>
 </div>
 
 <script>
-    async function convertYoutube() {
-        const url = document.getElementById('youtubeUrl').value;
-        const btn = document.querySelector('.btn-fetch');
+    function convertYoutube() {
+        const urlInput = document.getElementById('youtubeUrl').value.trim();
+        const btn = document.getElementById('convertBtn');
         
-        if(!url.includes('youtube.com') && !url.includes('youtu.be')) {
-            return Swal.fire('تنبيه', 'حط رابط يوتيوب صح يا غالي 😉', 'warning');
+        if (!urlInput) {
+            return Swal.fire('وين الرابط؟', 'حط الرابط أول يا وحش 😉', 'info');
         }
 
-        btn.innerText = "جاري التحويل... ⏳";
+        if (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be')) {
+            return Swal.fire('رابط غلط', 'تأكد إنه رابط يوتيوب حقيقي', 'warning');
+        }
+
+        btn.innerText = "جاري التحضير... 🚀";
         btn.disabled = true;
 
-        // استخدام API خارجي للتحويل (تم استخدام محرك تحويل سريع)
-        const videoId = extractVideoId(url);
-        
+        // استخراج الـ ID أو استخدام الرابط المباشر لخدمة مضمونة
+        // نستخدم خدمة klickaud أو y2mate-style api المستقرة
         try {
-            // ملاحظة: هذا الـ API تجريبي وسريع للتحميل المباشر
-            const downloadUrl = `https://api.vevioz.com/@api/button/mp3/${videoId}`;
+            // الطريقة المباشرة والأكثر ضماناً هي توجيه المستخدم لخدمة معالجة فورية
+            // هذا الرابط يستخدم محرك mp3-now المستقر جداً
+            const downloadServiceUrl = `https://www.y2mate.com/youtube-mp3/${extractVideoId(urlInput)}`;
             
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('videoTitle').innerText = "تم تجهيز ملف الصوت بنجاح ✅";
-            
-            const dlBtn = document.getElementById('downloadBtn');
-            dlBtn.onclick = () => {
-                window.open(downloadUrl, '_blank');
-            };
+            // فتح التحميل في نافذة جديدة لضمان عدم تعليق موقعك
+            window.open(downloadServiceUrl, '_blank');
 
-            Swal.fire({ title: 'تم التحويل! ✨', icon: 'success', timer: 1500, showConfirmButton: false });
-            
-        } catch(e) { 
-            Swal.fire('خطأ', 'فشل في سحب الفيديو، جرب رابط آخر', 'error'); 
-        } finally { 
-            btn.innerText = "تحويل الآن 🔥"; 
-            btn.disabled = false; 
+            Swal.fire({
+                title: 'جاهز! ✅',
+                text: 'فتحت لك صفحة التحميل، اضغط Download ومبروك عليك',
+                icon: 'success',
+                confirmButtonText: 'تمام'
+            });
+
+        } catch (e) {
+            Swal.fire('مشكلة', 'الرابط فيه مشكلة، جرب غيره', 'error');
+        } finally {
+            btn.innerText = "تحميل الأغنية فوراً 🔥";
+            btn.disabled = false;
         }
     }
 
     function extractVideoId(url) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
-        return (match && match[2].length == 11) ? match[2] : null;
+        return (match && match[2].length == 11) ? match[2] : url;
     }
 </script>
 
