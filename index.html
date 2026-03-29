@@ -39,7 +39,7 @@
         }
         .splash-logo {
             width: 85%;
-            max-width: 400px;
+            max-width: 320px;
             height: auto;
             animation: fadeInGlow 1.5s ease-out forwards;
             filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.5));
@@ -88,8 +88,16 @@
             text-align: center; margin-bottom: 40px;
             animation: glow 2s ease-in-out infinite alternate;
         }
+        
+        /* الصورة في الصفحة الرئيسية */
+        .brand-img {
+            width: 100px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+        }
+
         .main-logo h1 {
-            font-size: 45px; font-weight: 900;
+            font-size: 42px; font-weight: 900;
             background: linear-gradient(to bottom, #fff, #a29bfe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -127,7 +135,7 @@
         }
 
         .tiktok-bg { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .youtube-bg { background: linear-gradient(45deg, #00b894, #55efc4); }
+        .youtube-bg { background: linear-gradient(45deg, #ff4b2b, #ff416c); }
         .soon-bg { background: linear-gradient(45deg, #f1c40f, #f39c12); box-shadow: 0 0 15px rgba(241, 196, 15, 0.4); }
 
         .card-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
@@ -141,7 +149,7 @@
 
     <div id="splash-screen">
         <div class="splash-content">
-            <img src="https://raw.githubusercontent.com/qussaitik/t/main/shaqi.png" alt="لوجو عالم المصيبة" class="splash-logo">
+            <img src="https://raw.githubusercontent.com/qussaitik/t/main/shaqi.png" alt="AL-MOSIBA" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x150/0f0c29/ffffff?text=AL-MOSIBA'">
             <div class="splash-loader-bar">
                 <div class="splash-progress"></div>
             </div>
@@ -151,7 +159,7 @@
 
     <div id="portal-view">
         <div class="main-logo">
-            <i class="fas fa-bolt" style="color: var(--gold); font-size: 40px; margin-bottom: 10px;"></i>
+            <img src="https://raw.githubusercontent.com/qussaitik/t/main/shaqi.png" alt="Logo" class="brand-img" onerror="this.style.display='none'">
             <h1>المصيبه للتحميل</h1>
             <p style="opacity: 0.6; font-size: 14px; letter-spacing: 2px;">🇵🇸QUSSAI PALESTINE🇵🇸</p>
         </div>
@@ -173,7 +181,7 @@
                 </div>
             </a>
 
-            <div class="portal-card" style="cursor: default;">
+            <div class="portal-card" style="cursor: default; opacity: 0.8;">
                 <div class="icon-box soon-bg"><i class="fas fa-clock"></i></div>
                 <div class="card-text">
                     <h3>قريباً</h3>
@@ -186,7 +194,6 @@
     </div>
 
     <script>
-        // إخفاء شاشة الترحيب بعد 4 ثواني
         window.addEventListener('load', function() {
             setTimeout(function() {
                 const splash = document.getElementById('splash-screen');
