@@ -31,14 +31,13 @@
         header { padding: 15px 20px; background: rgba(22, 27, 34, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
         header h1 { font-size: 1.2rem; font-weight: 900; color: var(--gold); }
         
-        /* حل مشكلة الرسالة الأخيرة بالنزول الكافي */
-        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; padding-bottom: 150px; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scroll-behavior: smooth; padding-bottom: 160px; }
         
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 0.95rem; animation: fadeIn 0.3s ease; position: relative; display: flex; flex-direction: column; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 20px; font-size: 0.95rem; animation: fadeIn 0.3s ease; position: relative; display: flex; flex-direction: column; word-wrap: break-word; }
         .msg-me { align-self: flex-start; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
         .msg-other { align-self: flex-end; background: var(--card-bg); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
         
-        /* --- تمييز رسالة قصي الملكية --- */
+        /* --- تمييز قصي --- */
         .msg-admin { border: 1px solid var(--gold); box-shadow: 0 0 15px rgba(241, 196, 15, 0.2); animation: adminPulse 2s infinite alternate; }
         .admin-name { color: var(--gold) !important; font-weight: 900; display: inline-flex; align-items: center; gap: 5px; position: relative; overflow: hidden; animation: adminMove 3s infinite ease-in-out; }
         .admin-name::before { content: '👑'; }
@@ -52,8 +51,8 @@
         .message img, .message video { max-width: 100%; border-radius: 12px; margin-top: 8px; }
 
         /* منطقة الكتابة */
-        .input-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px 30px; background: var(--bg); display: flex; gap: 10px; z-index: 100; align-items: center; }
-        #userMsg { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color: #fff; outline: none; font-family: 'Tajawal'; }
+        .input-container { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px 20px 30px; background: var(--bg); display: flex; gap: 8px; z-index: 100; align-items: center; }
+        #userMsg { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color: #fff; outline: none; font-family: 'Tajawal'; font-size: 1rem; }
         
         .btn-act { width: 45px; height: 45px; border-radius: 50%; border: none; background: var(--card-bg); color: var(--gold); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
         .send-btn { width: 50px; height: 50px; background: var(--primary); color: #fff; }
@@ -82,9 +81,7 @@
                 <button onclick="clearChat()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:4px 10px; border-radius:8px; font-size:10px;">مسح 🗑️</button>
             </div>
         </header>
-
         <div id="chat-box"></div>
-
         <div class="input-container">
             <button class="btn-act" onclick="document.getElementById('fIn').click()"><i class="fas fa-plus"></i></button>
             <button class="btn-act" onclick="pickColor()"><i class="fas fa-palette"></i></button>
@@ -107,7 +104,7 @@
 
         async function login() {
             const { value: name } = await Swal.fire({
-                title: 'مرحباً', input: 'text', inputPlaceholder: 'اسمك...', confirmButtonText: 'دخول',
+                title: 'مرحباً بك', input: 'text', inputPlaceholder: 'اسمك...', confirmButtonText: 'دخول',
                 background: '#161b22', color: '#fff', confirmButtonColor: '#6c5ce7', allowOutsideClick: false
             });
             if (name === "قصي") {
@@ -115,7 +112,7 @@
                 if (pass === "159159") { isAdmin = true; myName = "قصي"; document.getElementById('admin-actions').style.display = 'block'; }
                 else { location.reload(); }
             } else { myName = name || "مشارك"; }
-            pubnub.subscribe({ channels: ['mosiba_v6'] });
+            pubnub.subscribe({ channels: ['mosiba_v7'] });
         }
 
         async function pickColor() {
@@ -123,12 +120,13 @@
                 title: 'اختر لون الخط',
                 input: 'radio',
                 inputOptions: { 
-                    '#fff': 'اللون الأبيض الأساسي', 
-                    '#f1c40f': 'اللون الذهبي الملكي', 
-                    '#00ffcc': 'لون نيون فسفوري', 
-                    '#ff6b6b': 'اللون الأحمر الجريء' 
+                    '#ffffff': 'أبيض', 
+                    '#3498db': 'أزرق', 
+                    '#e74c3c': 'أحمر', 
+                    '#e67e22': 'برتقالي', 
+                    '#2ecc71': 'أخضر' 
                 },
-                background: '#161b22', color: '#fff', confirmButtonText: 'حفظ اللون'
+                background: '#161b22', color: '#fff'
             });
             if(color) myColor = color;
         }
@@ -138,7 +136,7 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 const type = file.type.startsWith('image') ? 'img' : 'vid';
-                pubnub.publish({ channel: 'mosiba_v6', message: { media: e.target.result, mType: type, user: myName } });
+                pubnub.publish({ channel: 'mosiba_v7', message: { media: e.target.result, mType: type, user: myName } });
             };
             reader.readAsDataURL(file);
         }
@@ -146,7 +144,7 @@
         function sendMessage() {
             const input = document.getElementById('userMsg');
             if(!input.value.trim()) return;
-            pubnub.publish({ channel: 'mosiba_v6', message: { text: input.value, user: myName, color: myColor } });
+            pubnub.publish({ channel: 'mosiba_v7', message: { text: input.value, user: myName, color: myColor } });
             input.value = '';
         }
 
@@ -175,7 +173,7 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        function clearChat() { if(isAdmin) pubnub.publish({ channel: 'mosiba_v6', message: { type: "clear" } }); }
+        function clearChat() { if(isAdmin) pubnub.publish({ channel: 'mosiba_v7', message: { type: "clear" } }); }
 
         window.onload = () => {
             setTimeout(() => {
