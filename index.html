@@ -138,14 +138,16 @@
                 confirmButtonColor: '#6c5ce7',
                 didOpen: () => {
                     const container = Swal.getHtmlContainer();
-                    // إخفاء المربع الأبيض المزعج وتلوين النصوص
+                    // الضربة القاضية للمربع الأبيض
                     const radioContainer = container.querySelector('.swal2-radio');
                     if (radioContainer) {
-                        radioContainer.style.background = 'transparent';
+                        radioContainer.style.setProperty('background', 'transparent', 'important');
+                        radioContainer.style.setProperty('color', 'white', 'important');
                     }
-                    const labels = container.querySelectorAll('label');
+                    const labels = container.querySelectorAll('.swal2-radio label');
                     labels.forEach(l => { 
-                        l.style.color = 'white'; 
+                        l.style.setProperty('background', 'transparent', 'important');
+                        l.style.setProperty('color', 'white', 'important');
                         l.style.fontSize = '1.1rem';
                         l.style.fontWeight = 'bold';
                     });
