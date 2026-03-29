@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL-MOSIBA | يوتيوب برو</title>
+    <title>AL-MOSIBA | سناب تيوب ستايل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -13,87 +13,103 @@
             justify-content: center; align-items: center; color: #fff;
         }
         .main-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 35px;
-            padding: 40px; width: 90%; max-width: 420px; text-align: center;
+            padding: 30px; width: 90%; max-width: 420px; text-align: center;
         }
-        h1 { font-size: 2.8rem; color: #f1c40f; margin-bottom: 20px; text-transform: uppercase; }
+        h1 { font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; }
         input {
             width: 100%; padding: 18px; border-radius: 15px; border: none;
-            background: #fff; margin-bottom: 20px; box-sizing: border-box;
+            background: #fff; margin-bottom: 15px; box-sizing: border-box;
             outline: none; text-align: center; font-size: 1rem; color: #333;
         }
-        .btn-fetch {
+        .btn-analyze {
             background: #f1c40f; color: #000; border: none; padding: 18px;
             border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
+        /* منطقة النتيجة (زي سناب تيوب) */
+        .video-info {
+            display: none; margin-top: 25px; background: rgba(255,255,255,0.05);
+            padding: 20px; border-radius: 20px; border: 1px dashed #f1c40f;
+            animation: fadeIn 0.5s ease;
+        }
+        .thumb { width: 100%; border-radius: 15px; margin-bottom: 10px; }
+        .title { font-size: 0.9rem; font-weight: 600; margin-bottom: 15px; display: block; }
+        .btn-download {
+            background: #27ae60; color: #fff; border: none; padding: 15px;
+            border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div class="main-card">
     <h1>AL-MOSIBA</h1>
-    <p style="margin-bottom: 30px; opacity: 0.8;">تحميل MP3 بأسلوب التيك توك 🎵</p>
+    <p style="margin-bottom: 20px; opacity: 0.8;">حلل الرابط وحمل MP3 فوراً ⬇️</p>
     
-    <input type="text" id="targetUrl" placeholder="ضع رابط اليوتيوب هنا...">
-    <button class="btn-fetch" id="mainBtn" onclick="smartDownload()">بدء التحميل المباشر 🔥</button>
+    <input type="text" id="targetUrl" placeholder="ضع رابط يوتيوب هنا...">
+    <button class="btn-analyze" id="actionBtn" onclick="analyzeVideo()">تحليل الفيديو ✨</button>
 
-    <p style="margin-top: 40px; font-size: 11px; opacity: 0.3;">بواسطة قصي الفلسطيني &copy; 2026</p>
+    <div id="videoInfo" class="video-info">
+        <img id="videoThumb" class="thumb" src="" alt="Thumbnail">
+        <span id="videoTitle" class="title">اسم الفيديو يظهر هنا</span>
+        <button class="btn-download" onclick="downloadMp3()">
+            <span>⬇️ تحميل بصيغة MP3</span>
+        </button>
+    </div>
+
+    <p style="margin-top: 30px; font-size: 11px; opacity: 0.3;">بواسطة قصي الفلسطيني &copy; 2026</p>
 </div>
 
 <script>
-    async function smartDownload() {
-        const urlInput = document.getElementById('targetUrl').value.trim();
-        const btn = document.getElementById('mainBtn');
-        const videoId = extractId(urlInput);
-        
-        if(!urlInput || !videoId) return Swal.fire('وين الرابط؟', 'حط رابط يوتيوب صح يا وحش', 'warning');
+    let mp3Link = "";
 
-        btn.innerText = "جاري المعالجة... ⏳";
+    async function analyzeVideo() {
+        const url = document.getElementById('targetUrl').value.trim();
+        const btn = document.getElementById('actionBtn');
+        
+        if(!url.includes('youtu')) return Swal.fire('تنبيه', 'الرابط مش يوتيوب يا غالي', 'warning');
+
+        btn.innerText = "جاري التحليل... ⏳";
         btn.disabled = true;
 
-        Swal.fire({ title: 'لحظات يا فخم...', text: 'جاري تجهيز الملف الصوتي', didOpen: () => { Swal.showLoading(); } });
-
-        // استخدمنا سيرفر cobalt.tools - هاد السيرفر هو "الوحش" حالياً
-        // بيعطينا رابط تحميل مباشر وفوري بدون أي صفحات وسيطة
-        const apiBase = "https://api.cobalt.tools/api/json";
-        
         try {
-            const response = await fetch(apiBase, {
-                method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    url: urlInput,
-                    downloadMode: "audio",
-                    audioFormat: "mp3"
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.url) {
-                // هسا بنستخدم نفس حركة كود التيك توك تبعك (تنزيل صامت غصب)
-                const a = document.createElement('a');
-                a.href = data.url;
-                a.download = `Al-Mosiba-${videoId}.mp3`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                Swal.fire({ title: 'جاهز! ✨', text: 'بدأ التحميل عندك فوق', icon: 'success', timer: 2000, showConfirmButton: false });
-            } else {
-                throw new Error();
-            }
+            // محرك التحليل (API بيعطينا معلومات الفيديو ورابط MP3)
+            const res = await fetch(`https://api.vvevioz.com/@api/button/mp3/${extractId(url)}`);
+            
+            // بما إن الـ API هاد بيعمل Redirect، رح نعتبر الرابط المباشر هو نفسه الـ API
+            // بس بنعرض معلومات الفيديو أول (زي سناب تيوب)
+            const videoId = extractId(url);
+            document.getElementById('videoThumb').src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+            document.getElementById('videoTitle').innerText = "تم إيجاد الفيديو، جاهز للتحويل المباشر";
+            
+            mp3Link = `https://api.vvevioz.com/@api/button/mp3/${videoId}`;
+            
+            document.getElementById('videoInfo').style.display = 'block';
+            Swal.fire({ title: 'نجح التحليل! ✨', icon: 'success', timer: 1500, showConfirmButton: false });
+            
         } catch (e) {
-            // حل بديل سريع جداً إذا فشل السيرفر الأول
-            window.location.href = `https://convert2mp3s.com/api/button/mp3/${videoId}`;
+            Swal.fire('خطأ', 'السيرفر مضغوط، جرب مرة ثانية', 'error');
         } finally {
-            btn.innerText = "بدء التحميل المباشر 🔥";
+            btn.innerText = "تحليل رابط آخر 🔄";
             btn.disabled = false;
         }
+    }
+
+    function downloadMp3() {
+        if(!mp3Link) return;
+        
+        Swal.fire({ title: 'بدأ التحميل... ✨', text: 'يتم الآن سحب ملف الـ MP3', timer: 2000, showConfirmButton: false });
+        
+        // التحميل غصب بأسلوب التيك توك (Direct Trigger)
+        const a = document.createElement('a');
+        a.href = mp3Link;
+        a.target = "_self"; 
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
     function extractId(url) {
