@@ -27,7 +27,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1000000;
-            transition: opacity 1s ease;
+            transition: opacity 0.6s ease;
             margin: 0; padding: 0;
         }
         .splash-content { 
@@ -38,29 +38,30 @@
             width: 100%;
         }
         .splash-logo {
-            width: 85%;
-            max-width: 320px;
+            width: 70%;
+            max-width: 250px;
             height: auto;
-            animation: fadeInGlow 1.5s ease-out forwards;
-            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.5));
+            animation: fadeInGlow 1.2s ease-out forwards;
+            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.4));
         }
         .splash-loader-bar {
-            width: 180px; height: 5px;
+            width: 160px; height: 4px;
             background: rgba(255,255,255,0.05);
             border-radius: 10px;
-            margin-top: 30px;
+            margin-top: 25px;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .splash-progress {
             width: 0%; height: 100%;
             background: linear-gradient(90deg, #3498db, #9b59b6);
-            animation: splashLoad 3.8s ease-in-out forwards;
+            animation: splashLoad 3s ease-in-out forwards;
         }
         .splash-loading-text {
             font-family: 'Tajawal', sans-serif;
-            color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500; margin-top: 15px;
+            color: rgba(255,255,255,0.5); font-size: 12px; margin-top: 15px;
         }
+
         @keyframes fadeInGlow {
             0% { opacity: 0; transform: scale(0.9); }
             100% { opacity: 1; transform: scale(1); }
@@ -85,71 +86,69 @@
         }
 
         .main-logo {
-            text-align: center; margin-bottom: 40px;
+            text-align: center; margin-bottom: 35px;
             animation: glow 2s ease-in-out infinite alternate;
         }
         
-        /* الصورة في الصفحة الرئيسية */
         .brand-img {
             width: 100px;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+            height: auto;
+            margin-bottom: 10px;
         }
 
         .main-logo h1 {
-            font-size: 42px; font-weight: 900;
+            font-size: 38px; font-weight: 900;
             background: linear-gradient(to bottom, #fff, #a29bfe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
+            text-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
         }
 
         .portal-container {
-            display: flex; flex-direction: column; gap: 15px;
-            width: 100%; max-width: 400px;
+            display: flex; flex-direction: column; gap: 12px;
+            width: 100%; max-width: 380px;
             animation: slideUp 0.8s ease-out;
         }
 
         .portal-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px; border-radius: 25px;
-            display: flex; align-items: center; gap: 20px;
-            cursor: pointer; transition: 0.4s;
+            padding: 16px; border-radius: 22px;
+            display: flex; align-items: center; gap: 15px;
+            cursor: pointer; transition: 0.3s;
             backdrop-filter: blur(10px);
             text-decoration: none;
             color: white;
         }
 
         .portal-card:hover {
-            background: rgba(108, 92, 231, 0.2);
-            transform: scale(1.05);
+            background: rgba(108, 92, 231, 0.15);
+            transform: translateY(-3px);
             border-color: var(--primary);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
         }
 
         .icon-box {
-            width: 60px; height: 60px; border-radius: 18px;
+            width: 50px; height: 50px; border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 24px; color: white;
+            font-size: 20px; color: white;
         }
 
         .tiktok-bg { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
         .youtube-bg { background: linear-gradient(45deg, #ff4b2b, #ff416c); }
-        .soon-bg { background: linear-gradient(45deg, #f1c40f, #f39c12); box-shadow: 0 0 15px rgba(241, 196, 15, 0.4); }
+        .soon-bg { background: linear-gradient(45deg, #f1c40f, #f39c12); }
 
-        .card-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-        .card-text p { font-size: 12px; opacity: 0.7; }
+        .card-text h3 { font-size: 16px; font-weight: 800; margin-bottom: 2px; }
+        .card-text p { font-size: 11px; opacity: 0.6; }
 
-        @keyframes glow { from { filter: drop-shadow(0 0 5px rgba(108,92,231,0.4)); } to { filter: drop-shadow(0 0 20px rgba(108,92,231,0.8)); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow { from { filter: drop-shadow(0 0 5px rgba(108,92,231,0.3)); } to { filter: drop-shadow(0 0 15px rgba(108,92,231,0.6)); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <div class="splash-content">
-            <img src="https://raw.githubusercontent.com/qussaitik/t/main/shaqi.png" alt="AL-MOSIBA" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x150/0f0c29/ffffff?text=AL-MOSIBA'">
+            <img src="shaqi.png" alt="AL-MOSIBA" class="splash-logo">
             <div class="splash-loader-bar">
                 <div class="splash-progress"></div>
             </div>
@@ -159,9 +158,9 @@
 
     <div id="portal-view">
         <div class="main-logo">
-            <img src="https://raw.githubusercontent.com/qussaitik/t/main/shaqi.png" alt="Logo" class="brand-img" onerror="this.style.display='none'">
+            <img src="shaqi.png" alt="Logo" class="brand-img">
             <h1>المصيبه للتحميل</h1>
-            <p style="opacity: 0.6; font-size: 14px; letter-spacing: 2px;">🇵🇸QUSSAI PALESTINE🇵🇸</p>
+            <p style="opacity: 0.5; font-size: 12px; letter-spacing: 2px;">🇵🇸 QUSSAI PALESTINE 🇵🇸</p>
         </div>
 
         <div class="portal-container">
@@ -177,32 +176,38 @@
                 <div class="icon-box youtube-bg"><i class="fab fa-youtube"></i></div>
                 <div class="card-text">
                     <h3>تنزيل أغنية من يوتيوب</h3>
-                    <p>تحويل مقاطع اليوتيوب إلى MP3 بجودة عالية</p>
+                    <p>تحويل مقاطع اليوتيوب إلى MP3</p>
                 </div>
             </a>
 
-            <div class="portal-card" style="cursor: default; opacity: 0.8;">
+            <div class="portal-card" style="cursor: default; opacity: 0.6;">
                 <div class="icon-box soon-bg"><i class="fas fa-clock"></i></div>
                 <div class="card-text">
                     <h3>قريباً</h3>
-                    <p>انتظروا خدماتنا الجديدة والمميزة</p>
+                    <p>إضافات جديدة قادمة</p>
                 </div>
             </div>
         </div>
         
-        <p style="text-align: center; margin-top: 30px; font-size: 11px; opacity: 0.4;">جميع الحقوق محفوظة لصالح قصي الفلسطيني 2026</p>
+        <p style="text-align: center; margin-top: 25px; font-size: 10px; opacity: 0.3;">جميع الحقوق محفوظة لصالح قصي الفلسطيني 2026</p>
     </div>
 
     <script>
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const splash = document.getElementById('splash-screen');
-                if(splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => { splash.remove(); }, 1000);
-                }
-            }, 4000);
-        });
+        // دالة الإخفاء التلقائي
+        const splash = document.getElementById('splash-screen');
+        
+        function hideSplash() {
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 600);
+            }
+        }
+
+        // غصب عنه يفتح بعد 3.5 ثانية حتى لو الصورة ما طلعت
+        setTimeout(hideSplash, 3500);
+
+        // إذا كل شي جاهز قبل الوقت، افتح فوراً
+        window.addEventListener('load', hideSplash);
     </script>
 </body>
 </html>
