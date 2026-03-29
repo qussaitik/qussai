@@ -3,86 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المصيبة | خدمة راقية</title>
+    <title>المصيبة | المحول الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --accent: #6c5ce7; --bg: #0b101b; }
+        :root { --accent: #6c5ce7; --bg: #0b0e14; }
         body {
             margin: 0; font-family: 'Tajawal', sans-serif;
-            background: radial-gradient(circle at center, #1a1e2e 0%, #0b101b 100%);
+            background: radial-gradient(circle, #1a1e2e 0%, #0b0e14 100%);
             height: 100vh; display: flex; justify-content: center; align-items: center; color: #fff;
         }
         .main-card {
             background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px;
-            padding: 50px 30px; width: 92%; max-width: 460px; text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            padding: 50px 30px; width: 92%; max-width: 450px; text-align: center;
         }
         h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; background: linear-gradient(to bottom, #fff, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .description { font-size: 1rem; opacity: 0.6; margin-bottom: 35px; }
         input {
             width: 100%; padding: 22px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem; text-align: center; outline: none; margin-bottom: 25px;
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 25px;
         }
         .btn-fetch {
             background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #fff; border: none;
-            padding: 22px; border-radius: 20px; width: 100%; font-weight: 700; font-size: 1.4rem; cursor: pointer; transition: 0.4s;
+            padding: 22px; border-radius: 20px; width: 100%; font-weight: 700; font-size: 1.4rem; cursor: pointer; transition: 0.3s;
         }
-        .btn-fetch:disabled { opacity: 0.5; cursor: not-allowed; }
+        .loading-ring { display: none; margin: 20px auto; width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: var(--accent); animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="main-card">
     <h1>المصيبة</h1>
-    <p class="description">أهلاً بك، تفضل بتحويل يوتيوب إلى MP3 بكل سهولة</p>
+    <p style="opacity: 0.6; margin-bottom: 30px;">نظام تحويل ومعالجة ذكي 🎵</p>
     
-    <input type="text" id="youtubeUrl" placeholder="يرجى وضع رابط الفيديو هنا">
-    <button class="btn-fetch" id="convertBtn" onclick="handleDownload()">بدء التحميل الآن ✨</button>
+    <input type="text" id="youtubeUrl" placeholder="أدخل رابط الفيديو هنا">
+    <button class="btn-fetch" id="convertBtn" onclick="processConversion()">بدء التحويل والتحميل</button>
+    
+    <div id="loader" class="loading-ring"></div>
 
     <p style="margin-top: 40px; font-size: 12px; opacity: 0.4;">بواسطة قصي الفلسطيني &copy; 2026</p>
 </div>
 
 <script>
-    async function handleDownload() {
+    async function processConversion() {
         const urlInput = document.getElementById('youtubeUrl').value.trim();
         const btn = document.getElementById('convertBtn');
+        const loader = document.getElementById('loader');
         
-        if (!urlInput) return Swal.fire('تنبيه', 'يرجى وضع الرابط أولاً', 'info');
+        if (!urlInput) return Swal.fire('تنبيه', 'يرجى تزويدنا برابط الفيديو', 'info');
 
         const videoId = extractVideoId(urlInput);
-        if(!videoId) return Swal.fire('خطأ', 'الرابط المدخل غير صحيح', 'warning');
+        if(!videoId) return Swal.fire('خطأ', 'الرابط غير صحيح', 'error');
 
-        btn.innerText = "جاري المعالجة الفورية... 🚀";
-        btn.disabled = true;
+        // إخفاء الزر وإظهار اللودر (شغل إتيكيت)
+        btn.style.display = 'none';
+        loader.style.display = 'block';
 
-        // استخدمنا محرك (y2mate) عبر بروجسي مستقر جداً
-        const apiURL = `https://sh.m-sh.sh/download.php?url=${encodeURIComponent(urlInput)}&type=mp3`;
+        // استخدام محرك معالجة خلفي (تلقائي بدون نوافذ)
+        // هذا الرابط يطلب الملف مباشرة كـ Stream
+        const downloadUrl = `https://api.vvevioz.com/@api/button/mp3/${videoId}`;
 
         try {
-            // الطريقة الأضمن: فتح الرابط في نافذة خفية جداً تختفي فوراً لبدء الـ Trigger
-            const hiddenLink = document.createElement('a');
-            hiddenLink.href = `https://api.vvevioz.com/@api/button/mp3/${videoId}`; // محرك احتياطي سريع
-            hiddenLink.download = "music.mp3";
-            hiddenLink.target = "_self"; // عشان ما يفتح نافذة جديدة
-            document.body.appendChild(hiddenLink);
-            hiddenLink.click();
-            document.body.removeChild(hiddenLink);
+            // محاكاة طلب التحميل المباشر
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = `Al-Mosiba-${videoId}.mp3`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
             Swal.fire({
-                title: 'تم بنجاح ✨',
-                text: 'بدأ تحميل ملفك الصوتي الآن بكل رقي',
+                title: 'تمت المعالجة ✨',
+                text: 'بدأ تحميل الملف الصوتي على جهازك الآن',
                 icon: 'success',
                 timer: 4000,
                 showConfirmButton: false
             });
         } catch (e) {
-            Swal.fire('نعتذر', 'السيرفر يواجه ضغطاً حالياً، يرجى المحاولة لاحقاً', 'error');
+            Swal.fire('نعتذر', 'واجهنا مشكلة في المعالجة، يرجى المحاولة ثانية', 'error');
         } finally {
             setTimeout(() => {
-                btn.innerText = "بدء التحميل الآن ✨";
-                btn.disabled = false;
+                btn.style.display = 'block';
+                loader.style.display = 'none';
             }, 5000);
         }
     }
