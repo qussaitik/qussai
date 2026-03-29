@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>v2</title>
+    <title>موقع المصيبه</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
@@ -51,8 +51,6 @@
         
         .btn-act { background: none; border: none; color: #8696a0; cursor: pointer; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; }
         .send-btn { width: 45px; height: 45px; border-radius: 50%; background: #00a884; color: #fff; font-size: 1.1rem; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -64,7 +62,7 @@
 
     <div id="main-menu">
         <img src="shaqi.png" style="width: 150px; margin-bottom: 20px;">
-        <button class="menu-btn" onclick="startChat()"><i class="fas fa-comments"></i> دخول المصيبة شات</button>
+        <button class="menu-btn" onclick="checkAccess()"><i class="fas fa-comments"></i> دخول المصيبة شات</button>
         <button class="menu-btn" onclick="window.location.href='tiktok.html'"><i class="fab fa-tiktok"></i> تحميل تيك توك</button>
     </div>
 
@@ -98,16 +96,10 @@
         const myId = "u_" + Math.random().toString(16).slice(2);
         const pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', uuid: myId });
 
-        async function startChat() {
-            // منع الدخول إلا بباسوورد
+        async function checkAccess() {
             const { value: accessPass } = await Swal.fire({
-                title: 'رمز الدخول',
-                input: 'password',
-                inputPlaceholder: 'أدخل رمز الدخول للشات...',
-                background: '#161b22',
-                color: '#fff',
-                confirmButtonColor: '#00a884',
-                allowOutsideClick: false
+                title: 'رمز الدخول', input: 'password', inputPlaceholder: 'أدخل الرمز...',
+                background: '#161b22', color: '#fff', confirmButtonColor: '#00a884', allowOutsideClick: false
             });
 
             if (accessPass === "789789") {
@@ -115,7 +107,7 @@
                 document.getElementById('chat-interface').style.display = 'flex';
                 login();
             } else {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرمز غير صحيح!', background: '#161b22', color: '#fff' }).then(() => location.reload());
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرمز غير صحيح!', background: '#161b22', color: '#fff' });
             }
         }
 
@@ -158,9 +150,8 @@
             message: function(s) {
                 if(s.message.type === "clear") { document.getElementById('chat-box').innerHTML = ''; return; }
                 render(s.message, s.publisher);
-                // تشغيل الصوت عند استقبال رسالة من شخص آخر
                 if (s.publisher !== myId) {
-                    document.getElementById('msgSound').play().catch(e => console.log("Audio play blocked"));
+                    document.getElementById('msgSound').play().catch(e => console.log("Audio blocked"));
                 }
             }
         });
