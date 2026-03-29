@@ -10,9 +10,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        :root { --bg: #0b0e14; --card-bg: #161b22; --primary: #6c5ce7; --gold: #f1c40f; --text: #e6edf3; }
+        :root { --bg: #0b0e14; --card-bg: #161b22; --primary: #6c5ce7; --gold: #f1c40f; --text: #e6edf3; --glass: rgba(255, 255, 255, 0.03); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); height: 100vh; color: var(--text); overflow: hidden; display: flex; flex-direction: column; }
+        body { font-family: 'Tajawal', sans-serif; background: radial-gradient(circle at center, #1a1c24 0%, #0b0e14 100%); height: 100vh; color: var(--text); overflow: hidden; display: flex; flex-direction: column; }
 
         /* --- اللودر (Splash) --- */
         #splash-screen {
@@ -26,21 +26,41 @@
         @keyframes pulseGlow { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.2)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(108, 92, 231, 0.4)); } }
         @keyframes splashLoad { 0% { width: 0%; } 100% { width: 100%; } }
 
-        /* --- القائمة الرئيسية (بعد اللودر) --- */
+        /* --- القائمة الرئيسية (تصميم فخم جديد) --- */
         #main-menu {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); display: none; flex-direction: column; justify-content: center; align-items: center;
-            gap: 20px; z-index: 99999;
+            background: transparent; display: none; flex-direction: column; justify-content: center; align-items: center;
+            gap: 25px; z-index: 99999; padding: 20px;
         }
+        .menu-logo {
+            width: 180px; margin-bottom: 30px; 
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            animation: float 4s infinite ease-in-out;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
         .menu-btn {
-            width: 80%; max-width: 300px; padding: 18px; border-radius: 15px;
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
-            color: white; font-weight: 700; font-size: 1.1rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%; max-width: 320px; padding: 20px; border-radius: 20px;
+            background: var(--glass); 
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            color: white; font-weight: 700; font-size: 1.15rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
-        .menu-btn:active { transform: scale(0.95); background: var(--primary); }
-        .menu-btn i { color: var(--gold); }
+        .menu-btn i { font-size: 1.4rem; transition: 0.3s; }
+        .btn-chat { border-right: 4px solid var(--primary); }
+        .btn-tiktok { border-right: 4px solid #ff0050; }
+
+        .menu-btn:hover, .menu-btn:active {
+            background: rgba(108, 92, 231, 0.15);
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary);
+        }
+        .menu-btn:active { transform: scale(0.98); }
+
+        .menu-btn span { flex: 1; text-align: right; margin-right: 15px; }
 
         /* --- واجهة الشات --- */
         #chat-interface { display: none; flex-direction: column; height: 100vh; }
@@ -65,9 +85,6 @@
         #userMsg { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); color: #fff; outline: none; font-family: 'Tajawal'; font-size: 1rem; }
         .send-btn { width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* --- مشغل الأغاني --- */
-        #music-player { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--gold); z-index: 100000; width: 80%; text-align: center; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -80,15 +97,26 @@
     </div>
 
     <div id="main-menu">
-        <img src="shaqi.png" style="width: 150px; margin-bottom: 20px;">
-        <button class="menu-btn" onclick="openChat()"><i class="fas fa-comments"></i> دخول المصيبة شات</button>
-        <button class="menu-btn" onclick="window.location.href='tiktok.html'"><i class="fab fa-tiktok"></i> تحميل فيديو تيك توك</button>
-        <button class="menu-btn" onclick="toggleMusic()"><i class="fas fa-music"></i> أغاني</button>
+        <img src="shaqi.png" class="menu-logo" alt="Logo">
+        
+        <button class="menu-btn btn-chat" onclick="openChat()">
+            <i class="fas fa-comments" style="color: var(--primary);"></i>
+            <span>دخول المصيبة شات</span>
+            <i class="fas fa-chevron-left" style="font-size: 0.8rem; opacity: 0.5;"></i>
+        </button>
+
+        <button class="menu-btn btn-tiktok" onclick="window.location.href='tiktok.html'">
+            <i class="fab fa-tiktok"></i>
+            <span>تحميل فيديو تيك توك</span>
+            <i class="fas fa-chevron-left" style="font-size: 0.8rem; opacity: 0.5;"></i>
+        </button>
+        
+        <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.4; letter-spacing: 1px;">AL-MOSIBA V3.0 PRO</p>
     </div>
 
     <div id="chat-interface">
         <header>
-            <button onclick="backToMenu()" style="background:none; border:none; color:#fff; font-size:1.2rem;"><i class="fas fa-arrow-right"></i></button>
+            <button onclick="backToMenu()" style="background:none; border:none; color:#fff; font-size:1.2rem; padding: 5px;"><i class="fas fa-arrow-right"></i></button>
             <h1>المصيبه شات</h1>
             <div id="admin-actions" style="display: none;">
                 <button onclick="clearChat()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 12px; border-radius:10px; font-size:11px; font-weight:bold;">مسح 🗑️</button>
@@ -101,22 +129,12 @@
         </div>
     </div>
 
-    <div id="music-player">
-        <h3 style="color: var(--gold); margin-bottom: 15px;">مشغل الموسيقى</h3>
-        <audio id="myAudio" controls style="width: 100%;">
-            <source src="music1.mp3" type="audio/mpeg">
-            متصفحك لا يدعم المشغل.
-        </audio>
-        <button onclick="toggleMusic()" style="margin-top:20px; background:var(--primary); border:none; color:white; padding:10px 20px; border-radius:10px;">إغلاق</button>
-    </div>
-
     <script>
         let myName = "";
         let isAdmin = false;
         const myId = "u_" + Math.random().toString(16).slice(2);
         const pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', uuid: myId });
 
-        // الدخول للشات
         async function openChat() {
             if(!myName) {
                 const { value: name } = await Swal.fire({
@@ -144,12 +162,6 @@
             document.getElementById('main-menu').style.display = 'flex';
         }
 
-        function toggleMusic() {
-            const player = document.getElementById('music-player');
-            player.style.display = (player.style.display === 'block') ? 'none' : 'block';
-        }
-
-        // --- كود الشات الأساسي (بدون تغيير) ---
         pubnub.addListener({
             message: function(s) {
                 if(s.message.type === "clear") { document.getElementById('chat-box').innerHTML = '<p style="text-align:center; opacity:0.4; font-size:11px;">تم تنظيف الشات ✨</p>'; }
@@ -183,11 +195,14 @@
 
         window.onload = () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => { 
-                    document.getElementById('splash-screen').remove(); 
-                    document.getElementById('main-menu').style.display = 'flex';
-                }, 800);
+                const s = document.getElementById('splash-screen');
+                if(s) {
+                    s.style.opacity = '0';
+                    setTimeout(() => { 
+                        s.remove(); 
+                        document.getElementById('main-menu').style.display = 'flex';
+                    }, 800);
+                }
             }, 3000);
         };
         document.getElementById('userMsg').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
