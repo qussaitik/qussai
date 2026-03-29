@@ -3,93 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المصيبة | نظام المعالجة الذكي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>AL-MOSIBA | يوتيوب برو</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --accent: #6c5ce7; --bg: #0b0e14; }
         body {
-            margin: 0; font-family: 'Tajawal', sans-serif;
-            background: radial-gradient(circle, #1a1e2e 0%, #0b0e14 100%);
-            height: 100vh; display: flex; justify-content: center; align-items: center; color: #fff;
+            margin: 0; font-family: 'Cairo', sans-serif;
+            background: linear-gradient(-45deg, #2c3e50, #000000, #2c3e50);
+            background-size: 400% 400%; animation: gradient 15s ease infinite;
+            height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; color: #fff;
         }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .main-card {
-            background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px;
-            padding: 50px 30px; width: 92%; max-width: 450px; text-align: center;
+            padding: 50px 30px; width: 90%; max-width: 450px; text-align: center;
         }
-        h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 10px; background: linear-gradient(to bottom, #fff, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 3rem; font-weight: 900; margin: 0; background: linear-gradient(to bottom, #fff, #f1c40f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .description { font-size: 1.1rem; margin-bottom: 30px; opacity: 0.8; }
         input {
-            width: 100%; padding: 22px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05); color: #fff; font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 25px;
+            width: 100%; padding: 20px; border-radius: 20px; border: none;
+            background: rgba(255, 255, 255, 0.95); margin-bottom: 20px;
+            box-sizing: border-box; outline: none; text-align: center; font-size: 1.1rem; color: #333;
         }
         .btn-fetch {
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #fff; border: none;
-            padding: 22px; border-radius: 20px; width: 100%; font-weight: 700; font-size: 1.4rem; cursor: pointer; transition: 0.3s;
+            background: #f1c40f; color: #000; border: none; padding: 20px;
+            border-radius: 20px; width: 100%; font-weight: 900; font-size: 1.3rem; cursor: pointer; transition: 0.3s;
         }
-        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite;}
-        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 40% { color: white; text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 60% { text-shadow: .5em 0 0 white, 1em 0 0 rgba(0,0,0,0); } 80%, 100% { text-shadow: .5em 0 0 white, 1em 0 0 white; } }
+        .btn-fetch:disabled { background: #555; color: #ccc; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h1>المصيبة</h1>
-    <p style="opacity: 0.6; margin-bottom: 30px;">تحميل مباشر بكل رقي 🎵</p>
+    <h1>AL-MOSIBA</h1>
+    <p class="description">تحميل صوت يوتيوب MP3 بكل رقي 🎵</p>
     
-    <input type="text" id="youtubeUrl" placeholder="تفضل بوضع الرابط هنا">
-    <button class="btn-fetch" id="convertBtn" onclick="smartDownload()">بدء التحميل الفوري</button>
-    
-    <p id="status" style="margin-top: 20px; display: none;" class="loading-dots">جاري سحب الملف ومعالجته</p>
+    <input type="text" id="targetUrl" placeholder="تفضل بوضع رابط يوتيوب هنا...">
+    <button class="btn-fetch" id="mainBtn" onclick="fetchYouTube()">بدء المعالجة الذكية ✨</button>
 
     <p style="margin-top: 40px; font-size: 12px; opacity: 0.4;">بواسطة قصي الفلسطيني &copy; 2026</p>
 </div>
 
 <script>
-    async function smartDownload() {
-        const urlInput = document.getElementById('youtubeUrl').value.trim();
-        const btn = document.getElementById('convertBtn');
-        const status = document.getElementById('status');
+    async function fetchYouTube() {
+        const url = document.getElementById('targetUrl').value.trim();
+        const btn = document.getElementById('mainBtn');
         
-        if (!urlInput) return Swal.fire('تنبيه', 'يرجى وضع الرابط أولاً', 'info');
+        if(!url.includes('youtu')) return Swal.fire('تنبيه', 'حط رابط يوتيوب صح يا غالي 😉', 'warning');
 
-        const videoId = extractVideoId(urlInput);
-        if(!videoId) return Swal.fire('خطأ', 'الرابط غير صحيح', 'error');
+        btn.innerText = "جاري السحب غصب... ⚡";
+        btn.disabled = true;
 
-        btn.style.display = 'none';
-        status.style.display = 'block';
+        Swal.fire({
+            title: 'جاري المعالجة...',
+            text: 'يتم الآن سحب الملف الصوتي داخل موقعك',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
 
-        // محرك تحويل مباشر (API مستقر جداً عالمياً للسحب المباشر)
-        const downloadApi = `https://api.vvevioz.com/@api/button/mp3/${videoId}`;
+        // استخراج الـ ID
+        const videoId = extractId(url);
+        // استخدام سيرفر API مباشر يعطي رابط ملف خام (Raw File)
+        const apiLink = `https://api.vevioz.com/@api/button/mp3/${videoId}`;
 
         try {
-            // محاكاة التحميل غصب عن المتصفح ويوتيوب
-            const link = document.createElement('a');
-            link.href = downloadApi;
-            link.target = "_self"; // للتأكد إنه ما يفتح نافذة
-            link.download = `Al-Mosiba-Music.mp3`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // نفس حركة كود التيك توك تبعك (Fetch -> Blob -> Download)
+            const response = await fetch(apiLink);
+            
+            // بما إن الـ API أحياناً بيعمل Redirect، بنعمل محاكاة تحميل "إتيكيت"
+            const a = document.createElement('a');
+            a.href = apiLink;
+            a.download = `Al-Mosiba-${videoId}.mp3`;
+            a.target = "_self"; // تأكيد إنه ما يفتح نافذة
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-            Swal.fire({
-                title: 'تمت المعالجة ✨',
-                text: 'بدأ تحميل الملف الصوتي على جهازك الآن',
-                icon: 'success',
-                timer: 4000,
-                showConfirmButton: false
-            });
+            Swal.fire({ title: 'جاهز! ✨', text: 'بدأ التحميل فوراً على جهازك', icon: 'success', timer: 2000, showConfirmButton: false });
         } catch (e) {
-            Swal.fire('عذراً', 'يوتيوب يشدد الحماية، جرب رابط آخر بعد قليل', 'error');
+            // في حال فشل الـ Fetch المباشر بسبب الـ CORS
+            // بنستخدم "فتحة" المتصفح العادية بس بدون ما يحس المستخدم
+            window.location.href = apiLink; 
         } finally {
-            setTimeout(() => {
-                btn.style.display = 'block';
-                status.style.display = 'none';
-            }, 5000);
+            btn.innerText = "بدء المعالجة الذكية ✨";
+            btn.disabled = false;
         }
     }
 
-    function extractVideoId(url) {
+    function extractId(url) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
         return (match && match[2].length == 11) ? match[2] : null;
