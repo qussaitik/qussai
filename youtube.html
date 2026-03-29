@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL-MOSIBA | تحميل صوت من يوتيوب</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>المصيبة | خدمة التحميل الراقية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        :root {
+            --bg-color: #0b0e14;
+            --accent-color: #6c5ce7;
+            --text-gold: #f1c40f;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
         body {
             margin: 0;
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(-45deg, #1e1b40, #ff416c, #23a6d5, #0f0c29);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, #1a1e2e 0%, #0b0e14 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -21,123 +27,178 @@
             color: #fff;
         }
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         .main-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 35px;
-            padding: 40px 25px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px;
+            padding: 50px 30px;
             width: 90%;
-            max-width: 420px;
+            max-width: 480px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            animation: fadeIn 1s ease-out;
         }
 
-        h1 { font-size: 2.8rem; margin: 0; font-weight: 900; text-shadow: 0 5px 15px rgba(0,0,0,0.3); color: #fff; }
-        .description { font-size: 1rem; margin-bottom: 30px; font-weight: 600; color: #a29bfe; }
+        h1 { 
+            font-size: 3rem; 
+            font-weight: 900; 
+            margin-bottom: 10px; 
+            letter-spacing: 1px;
+            background: linear-gradient(to bottom, #fff, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description { 
+            font-size: 1.1rem; 
+            margin-bottom: 40px; 
+            font-weight: 400; 
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 25px;
+        }
 
         input {
             width: 100%;
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
-            background: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
+            padding: 22px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             box-sizing: border-box;
             outline: none;
             text-align: center;
-            font-size: 1rem;
-            color: #333;
-            font-weight: bold;
-            transition: 0.3s;
+            font-size: 1.1rem;
+            color: #fff;
+            transition: 0.4s;
         }
-        
-        input:focus { border-color: #ff416c; box-shadow: 0 0 15px rgba(255, 65, 108, 0.4); }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+        }
 
         .btn-fetch {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             color: #fff;
             border: none;
-            padding: 20px;
-            border-radius: 20px;
+            padding: 22px;
+            border-radius: 25px;
             width: 100%;
-            font-weight: 800;
-            font-size: 1.2rem;
+            font-weight: 700;
+            font-size: 1.3rem;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(255, 65, 108, 0.3);
+            transition: 0.4s;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
         }
 
-        .btn-fetch:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(255, 65, 108, 0.5); }
-        .btn-fetch:disabled { background: #666; cursor: not-allowed; transform: none; }
+        .btn-fetch:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5);
+        }
 
-        .footer-text { margin-top: 25px; font-size: 0.8rem; opacity: 0.6; }
+        .btn-fetch:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.4;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* فريم التحميل المخفي */
+        #hidden-downloader { display: none; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
     <h1>المصيبة</h1>
-    <p class="description">أسرع محول يوتيوب إلى MP3 🎵</p>
+    <p class="description">خدمة تحويل يوتيوب إلى MP3 بكل رقي 🎵</p>
     
-    <input type="text" id="youtubeUrl" placeholder="انسخ رابط الفيديو هون...">
-    <button class="btn-fetch" id="convertBtn" onclick="convertYoutube()">تحميل الأغنية فوراً 🔥</button>
+    <div class="input-group">
+        <input type="text" id="youtubeUrl" placeholder="تفضل بإضافة رابط الفيديو هنا">
+    </div>
 
-    <p class="footer-text">قوة قصي الفلسطيني 🇵🇸 2026</p>
+    <button class="btn-fetch" id="convertBtn" onclick="requestDownload()">بدء التحميل الآن</button>
+
+    <div class="footer">
+        بواسطة قصي الفلسطيني &copy; 2026
+    </div>
 </div>
 
+<iframe id="hidden-downloader"></iframe>
+
 <script>
-    function convertYoutube() {
+    function requestDownload() {
         const urlInput = document.getElementById('youtubeUrl').value.trim();
         const btn = document.getElementById('convertBtn');
+        const downloader = document.getElementById('hidden-downloader');
         
         if (!urlInput) {
-            return Swal.fire('وين الرابط؟', 'حط الرابط أول يا وحش 😉', 'info');
+            return Swal.fire({
+                title: 'عذراً',
+                text: 'يرجى تزويدنا برابط الفيديو للبدء',
+                icon: 'info',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#6c5ce7'
+            });
         }
 
-        if (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be')) {
-            return Swal.fire('رابط غلط', 'تأكد إنه رابط يوتيوب حقيقي', 'warning');
+        const videoId = extractVideoId(urlInput);
+        if(!videoId) {
+            return Swal.fire('تنبيه', 'يرجى التأكد من صحة الرابط المدخل', 'warning');
         }
 
-        btn.innerText = "جاري التحضير... 🚀";
+        // تغيير حالة الزر بكل لباقة
+        btn.innerText = "جاري معالجة طلبك... ⏳";
         btn.disabled = true;
 
-        // استخراج الـ ID أو استخدام الرابط المباشر لخدمة مضمونة
-        // نستخدم خدمة klickaud أو y2mate-style api المستقرة
+        // الرابط المباشر للمحرك السريع
+        const directApi = `https://api.vvevioz.com/@api/button/mp3/${videoId}`;
+        
         try {
-            // الطريقة المباشرة والأكثر ضماناً هي توجيه المستخدم لخدمة معالجة فورية
-            // هذا الرابط يستخدم محرك mp3-now المستقر جداً
-            const downloadServiceUrl = `https://www.y2mate.com/youtube-mp3/${extractVideoId(urlInput)}`;
-            
-            // فتح التحميل في نافذة جديدة لضمان عدم تعليق موقعك
-            window.open(downloadServiceUrl, '_blank');
+            // توجيه الفريم للرابط لبدء التحميل تلقائياً
+            downloader.src = directApi;
 
             Swal.fire({
-                title: 'جاهز! ✅',
-                text: 'فتحت لك صفحة التحميل، اضغط Download ومبروك عليك',
+                title: 'تم بنجاح ✨',
+                text: 'سيبدأ تحميل ملفك الصوتي خلال لحظات، شكراً لانتظارك',
                 icon: 'success',
-                confirmButtonText: 'تمام'
+                timer: 4000,
+                showConfirmButton: false
             });
-
-        } catch (e) {
-            Swal.fire('مشكلة', 'الرابط فيه مشكلة، جرب غيره', 'error');
-        } finally {
-            btn.innerText = "تحميل الأغنية فوراً 🔥";
-            btn.disabled = false;
+        } catch (error) {
+            Swal.fire('نعتذر', 'واجهنا مشكلة بسيطة، يرجى المحاولة لاحقاً', 'error');
         }
+
+        // إعادة الزر لوضعه الطبيعي بعد مدة قصيرة
+        setTimeout(() => {
+            btn.innerText = "بدء التحميل الآن";
+            btn.disabled = false;
+        }, 6000);
     }
 
     function extractVideoId(url) {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const match = url.match(regExp);
-        return (match && match[2].length == 11) ? match[2] : url;
+        return (match && match[2].length == 11) ? match[2] : null;
     }
 </script>
 
