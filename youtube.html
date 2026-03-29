@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AL-MOSIBA | سناب تيوب ستايل</title>
+    <title>AL-MOSIBA | سناب تيوب برو</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -15,9 +15,9 @@
         .main-card {
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 35px;
-            padding: 30px; width: 90%; max-width: 420px; text-align: center;
+            padding: 30px; width: 92%; max-width: 450px; text-align: center;
         }
-        h1 { font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; }
+        h1 { font-size: 2.5rem; color: #f1c40f; margin-bottom: 20px; text-shadow: 0 5px 15px rgba(241, 196, 15, 0.2); }
         input {
             width: 100%; padding: 18px; border-radius: 15px; border: none;
             background: #fff; margin-bottom: 15px; box-sizing: border-box;
@@ -27,20 +27,15 @@
             background: #f1c40f; color: #000; border: none; padding: 18px;
             border-radius: 15px; width: 100%; font-weight: 800; cursor: pointer; transition: 0.3s;
         }
-        /* منطقة النتيجة (زي سناب تيوب) */
-        .video-info {
-            display: none; margin-top: 25px; background: rgba(255,255,255,0.05);
-            padding: 20px; border-radius: 20px; border: 1px dashed #f1c40f;
-            animation: fadeIn 0.5s ease;
+        /* نافذة العرض والتحميل (زي سناب تيوب) */
+        #downloadArea {
+            display: none; margin-top: 25px; border-radius: 20px;
+            overflow: hidden; border: 1px solid #f1c40f;
+            background: #000; animation: slideUp 0.5s ease;
         }
-        .thumb { width: 100%; border-radius: 15px; margin-bottom: 10px; }
-        .title { font-size: 0.9rem; font-weight: 600; margin-bottom: 15px; display: block; }
-        .btn-download {
-            background: #27ae60; color: #fff; border: none; padding: 15px;
-            border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        iframe { width: 100%; height: 200px; border: none; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -50,72 +45,44 @@
     <p style="margin-bottom: 20px; opacity: 0.8;">حلل الرابط وحمل MP3 فوراً ⬇️</p>
     
     <input type="text" id="targetUrl" placeholder="ضع رابط يوتيوب هنا...">
-    <button class="btn-analyze" id="actionBtn" onclick="analyzeVideo()">تحليل الفيديو ✨</button>
+    <button class="btn-analyze" id="actionBtn" onclick="openSnaptubeStyle()">تحليل وإظهار التحميل ✨</button>
 
-    <div id="videoInfo" class="video-info">
-        <img id="videoThumb" class="thumb" src="" alt="Thumbnail">
-        <span id="videoTitle" class="title">اسم الفيديو يظهر هنا</span>
-        <button class="btn-download" onclick="downloadMp3()">
-            <span>⬇️ تحميل بصيغة MP3</span>
-        </button>
+    <div id="downloadArea">
+        <iframe id="dlFrame" src=""></iframe>
     </div>
 
     <p style="margin-top: 30px; font-size: 11px; opacity: 0.3;">بواسطة قصي الفلسطيني &copy; 2026</p>
 </div>
 
 <script>
-    let mp3Link = "";
-
-    async function analyzeVideo() {
+    function openSnaptubeStyle() {
         const url = document.getElementById('targetUrl').value.trim();
         const btn = document.getElementById('actionBtn');
-        
-        if(!url.includes('youtu')) return Swal.fire('تنبيه', 'الرابط مش يوتيوب يا غالي', 'warning');
+        const area = document.getElementById('downloadArea');
+        const frame = document.getElementById('dlFrame');
 
-        btn.innerText = "جاري التحليل... ⏳";
-        btn.disabled = true;
-
-        try {
-            // محرك التحليل (API بيعطينا معلومات الفيديو ورابط MP3)
-            const res = await fetch(`https://api.vvevioz.com/@api/button/mp3/${extractId(url)}`);
-            
-            // بما إن الـ API هاد بيعمل Redirect، رح نعتبر الرابط المباشر هو نفسه الـ API
-            // بس بنعرض معلومات الفيديو أول (زي سناب تيوب)
-            const videoId = extractId(url);
-            document.getElementById('videoThumb').src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-            document.getElementById('videoTitle').innerText = "تم إيجاد الفيديو، جاهز للتحويل المباشر";
-            
-            mp3Link = `https://api.vvevioz.com/@api/button/mp3/${videoId}`;
-            
-            document.getElementById('videoInfo').style.display = 'block';
-            Swal.fire({ title: 'نجح التحليل! ✨', icon: 'success', timer: 1500, showConfirmButton: false });
-            
-        } catch (e) {
-            Swal.fire('خطأ', 'السيرفر مضغوط، جرب مرة ثانية', 'error');
-        } finally {
-            btn.innerText = "تحليل رابط آخر 🔄";
-            btn.disabled = false;
+        if(!url.includes('youtu')) {
+            return Swal.fire('تنبيه', 'الرابط مش يوتيوب يا غالي 😉', 'warning');
         }
-    }
 
-    function downloadMp3() {
-        if(!mp3Link) return;
+        btn.innerText = "جاري فتح نافذة التحميل... ⏳";
         
-        Swal.fire({ title: 'بدأ التحميل... ✨', text: 'يتم الآن سحب ملف الـ MP3', timer: 2000, showConfirmButton: false });
+        // استخدام محرك معالجة خارجي مستقر جداً (Loader.to) داخل Iframe
+        // هذا المحرك بيعرض زر MP3 مباشرة جوا موقعنا
+        const loaderUrl = `https://loader.to/api/card/?url=${encodeURIComponent(url)}&f=mp3&color=f1c40f`;
         
-        // التحميل غصب بأسلوب التيك توك (Direct Trigger)
-        const a = document.createElement('a');
-        a.href = mp3Link;
-        a.target = "_self"; 
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+        frame.src = loaderUrl;
+        area.style.display = 'block';
 
-    function extractId(url) {
-        const reg = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const m = url.match(reg);
-        return (m && m[2].length == 11) ? m[2] : null;
+        Swal.fire({
+            title: 'تم التحليل! ✨',
+            text: 'اختر جودة الـ MP3 من النافذة بالأسفل وابدأ التحميل',
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false
+        });
+
+        btn.innerText = "تحليل رابط آخر 🔄";
     }
 </script>
 
