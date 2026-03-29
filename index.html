@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المصيبه | منصة الإهداءات الراقية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>المصيبه | رادار الإهداءات الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
@@ -16,13 +16,14 @@
             --dark: #0f0c29;
             --white: #ffffff;
             --gold: #f1c40f;
+            --loader: rgba(108, 92, 231, 0.2);
         }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         /* --- شاشة الترحيب --- */
         #splash-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle at center, #1e1b40 0%, #0f0c29 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 1000000; transition: opacity 0.8s ease;
@@ -36,49 +37,103 @@
 
         /* --- شريط الإهداء العلوي --- */
         .live-ticker {
-            position: fixed; top: 0; left: 0; width: 100%; height: 50px;
-            background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed; top: 0; left: 0; width: 100%; height: 40px;
+            background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; align-items: center; overflow: hidden; z-index: 99;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
         }
         #tickerText {
-            white-space: nowrap; font-size: 1.2rem; font-weight: 500; color: var(--gold);
-            animation: marquee 20s linear infinite;
+            white-space: nowrap; font-size: 0.9rem; font-weight: 500; color: var(--gold); opacity: 0.8;
+            animation: marquee 25s linear infinite;
         }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         /* --- الصفحة الرئيسية --- */
-        body { font-family: 'Tajawal', sans-serif; background: #0f0c29; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; color: white; margin:0; }
-        #portal-view { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body {
+            font-family: 'Tajawal', sans-serif; background: #0f0c29; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; color: white; margin:0; padding: 20px;
+        }
 
-        .brand-img { width: 100px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); margin-bottom: 10px; }
-        h1 { font-size: 35px; font-weight: 900; letter-spacing: 1px; color: #fff; margin-bottom: 5px; }
+        #portal-view {
+            width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.5s ease;
+        }
 
-        /* كرت الإهداء */
+        /* اللوجو بالموبايل */
+        .main-logo { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .brand-img { width: 80px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); margin-bottom: 8px; }
+        h1 { font-size: 30px; font-weight: 900; letter-spacing: 1px; color: #fff; margin: 0; }
+        .sub-text { color: var(--gold); font-weight: 500; font-size: 10px; letter-spacing: 2px; opacity: 0.8; }
+
+        /* كرت الإهداء (الواجهة الرئيسية) */
         .dedication-card {
             background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 30px; border-radius: 30px; width: 100%; backdrop-filter: blur(20px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: slideUp 1s ease-out;
+            padding: 25px; border-radius: 25px; width: 100%; max-width: 380px; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: slideUp 0.8s ease-out;
+            display: none; /* مخفي أول ما يوصل إهداء */
         }
-        .dedication-card p { font-size: 14px; opacity: 0.7; margin-bottom: 20px; text-align: center; }
+        
+        .dedication-card p { font-size: 13px; opacity: 0.7; margin-bottom: 18px; text-align: center; color: #fff; }
 
         input, textarea {
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05); color: #fff; margin-bottom: 12px;
-            text-align: center; font-family: 'Tajawal'; font-size: 0.95rem; outline: none; transition: 0.3s;
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03); color: #fff; margin-bottom: 10px;
+            text-align: center; font-family: 'Tajawal'; font-size: 0.9rem; outline: none; transition: 0.3s;
         }
-        input:focus, textarea:focus { border-color: var(--secondary); background: rgba(255,255,255,0.08); }
-        
-        textarea { height: 90px; resize: none; }
+        input:focus, textarea:focus { border-color: var(--secondary); background: rgba(255,255,255,0.06); }
+        textarea { height: 70px; resize: none; font-size: 0.85rem; }
+
+        /* خيار المجهول */
+        .anon-option {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 11px; opacity: 0.6; margin-bottom: 15px; cursor: pointer;
+        }
+        .anon-option input { width: 14px; height: 14px; margin: 0; cursor: pointer; }
 
         .send-btn {
-            background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; border: none; padding: 16px;
-            border-radius: 12px; width: 100%; font-weight: 700; font-size: 1.1rem;
-            cursor: pointer; transition: 0.3s;
+            background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; border: none; padding: 14px;
+            border-radius: 10px; width: 100%; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
         }
-        .send-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .send-btn:active { opacity: 0.9; transform: scale(0.98); }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- شاشة عرض الإهداء في المنتصف (The Hero) --- */
+        #display-overlay {
+            width: 100%; max-width: 380px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .hero-dedication {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(108, 92, 231, 0.2);
+            padding: 30px; border-radius: 30px; width: 100%; backdrop-filter: blur(15px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+        }
+
+        .loader-line { width: 50%; height: 2px; background: var(--loader); border-radius: 10px; margin: 0 auto; overflow: hidden; position: relative; }
+        .loader-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); animation: loadLine 1s infinite linear; }
+        @keyframes loadLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        .hero-name { font-size: 12px; font-weight: 500; color: #fff; opacity: 0.6; margin-top: 15px; letter-spacing: 1px; }
+        .hero-msg {
+            font-size: 1.6rem; font-weight: 900; color: var(--white);
+            background: linear-gradient(135deg, #fff, #a29bfe); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; margin: 20px 0; word-wrap: break-word; line-height: 1.2;
+        }
+        .hero-loader-bottom { width: 30%; height: 2px; background: var(--loader); border-radius: 10px; margin: 0 auto; }
+
+        /* زر تغيير الإهداء الصغير */
+        #changeBtn {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 35px; height: 35px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; cursor: pointer; transition: 0.3s; opacity: 0.4; z-index: 100;
+        }
+        #changeBtn:hover { opacity: 1; background: var(--primary); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -87,29 +142,48 @@
         <div class="splash-content">
             <img src="shaqi.png" alt="AL-MOSIBA" class="splash-logo">
             <div class="splash-loader-bar"><div class="splash-progress"></div></div>
-            <p style="color:#fff; margin-top:15px; font-size: 14px; opacity: 0.8;">بانتظار لحظاتكم الجميلة...</p>
+            <p style="color:#fff; margin-top:15px; font-size: 12px; opacity: 0.7; letter-spacing: 1px;">تحميل عالم المصيبة...</p>
         </div>
     </div>
 
     <div class="live-ticker">
-        <div id="tickerText">نسعد باستقبال كلماتكم الطيبة هنا.. 🕊️</div>
+        <div id="tickerText">نسعد باستقبال كلماتكم الطيبة.. 🕊️</div>
+    </div>
+
+    <div id="changeBtn" onclick="showInputCard()">
+        <i class="fas fa-edit"></i>
     </div>
 
     <div id="portal-view">
         <div class="main-logo">
             <img src="shaqi.png" alt="Logo" class="brand-img">
             <h1>المصيبه</h1>
-            <p style="color:var(--gold); font-weight:500; font-size:11px; letter-spacing:3px; margin-bottom:25px; opacity: 0.9;">مساحة للإهداءات الراقية</p>
+            <p class="sub-text">QUSSAI PALESTINE 🇵🇸</p>
         </div>
 
-        <div class="dedication-card">
-            <p>تفضل بكتابة اسمك ورسالتك لتظهر للجميع</p>
+        <div id="inputDedicationCard" class="dedication-card" style="display: block;">
+            <p>شاركنا كلمتك لتظهر للجميع</p>
             <input type="text" id="userName" placeholder="الاسم الكريم">
             <textarea id="userMsg" placeholder="عبر عن إهدائك بكلمات راقية..."></textarea>
-            <button class="send-btn" onclick="sendDedication()">إرسال الإهداء الآن ✨</button>
+            
+            <label class="anon-option">
+                <input type="checkbox" id="isAnonymous">
+                إرسال من مجهول الهوية
+            </label>
+
+            <button class="send-btn" onclick="sendDedication()">نشر الإهداء الآن ✨</button>
+        </div>
+
+        <div id="display-overlay" style="display: none;">
+            <div class="hero-dedication">
+                <div class="loader-line"></div>
+                <div class="hero-name">إهداء من: [ <span id="heroName">المجهول</span> ]</div>
+                <div id="heroMsg" class="hero-msg">بانتظار كلماتكم العذبة...</div>
+                <div class="hero-loader-bottom"></div>
+            </div>
         </div>
         
-        <p style="text-align: center; margin-top: 30px; font-size: 11px; opacity: 0.4;">
+        <p style="text-align: center; margin-top: 30px; font-size: 10px; opacity: 0.3;">
             مع تحيات قصي الفلسطيني &copy; 2026
         </p>
     </div>
@@ -122,30 +196,60 @@
             uuid: "visitor_" + Math.random().toString(16).slice(2)
         });
 
-        pubnub.subscribe({ channels: ['mosiba_elegant_v1'] });
+        pubnub.subscribe({ channels: ['mosiba_mobile_v1'] });
 
         pubnub.addListener({
             message: function(s) {
+                const data = s.message;
                 const ticker = document.getElementById('tickerText');
+                const overlay = document.getElementById('display-overlay');
+                const heroName = document.getElementById('heroName');
+                const heroMsg = document.getElementById('heroMsg');
+
+                // تحديث الشريط العلوي
                 ticker.style.animation = 'none';
-                ticker.innerText = `🕊️ إهداء من [ ${s.message.name} ]: ${s.message.msg} ✨`;
-                setTimeout(() => { ticker.style.animation = 'marquee 20s linear infinite'; }, 50);
+                ticker.innerText = `🕊️ إهداء من [ ${data.name} ]: ${data.msg} ✨`;
+                setTimeout(() => { ticker.style.animation = 'marquee 25s linear infinite'; }, 50);
+
+                // إظهار الإهداء في المنتصف (The Hero)
+                overlay.style.display = 'flex';
+                document.getElementById('inputDedicationCard').style.display = 'none'; // إخفاء كرت الإدخال
+
+                heroName.innerText = data.name;
+                heroMsg.innerText = data.msg;
+
+                // تناسق الخط أوتوماتيكياً
+                if(data.msg.length < 20) heroMsg.style.fontSize = "2.2rem";
+                else if(data.msg.length < 50) heroMsg.style.fontSize = "1.8rem";
+                else heroMsg.style.fontSize = "1.4rem";
             }
         });
 
         function sendDedication() {
-            const name = document.getElementById('userName').value.trim();
+            let name = document.getElementById('userName').value.trim();
             const msg = document.getElementById('userMsg').value.trim();
+            const isAnon = document.getElementById('isAnonymous').checked;
 
-            if(!name || !msg) return Swal.fire({ title: 'عذراً', text: 'يرجى إكمال البيانات بلطف', icon: 'info', confirmButtonText: 'حسناً' });
+            if(!msg) return Swal.fire({ title: 'عذراً', text: 'يرجى كتابة رسالة الإهداء بلطف', icon: 'info', confirmButtonText: 'حسناً' });
+
+            // تحديد الاسم
+            if(isAnon) name = "مجهول الهوية";
+            else if(!name) name = "محب للمصيبة";
 
             pubnub.publish({
-                channel: 'mosiba_elegant_v1',
+                channel: 'mosiba_mobile_v1',
                 message: { name: name, msg: msg }
             });
 
             document.getElementById('userMsg').value = '';
             Swal.fire({ title: 'شكراً لك', text: 'تم نشر كلماتك بنجاح', icon: 'success', timer: 1500, showConfirmButton: false });
+        }
+
+        // دالة إظهار كرت الإدخال لتغيير الإهداء
+        function showInputCard() {
+            document.getElementById('display-overlay').style.display = 'none';
+            document.getElementById('inputDedicationCard').style.display = 'block';
+            document.getElementById('userName').focus();
         }
 
         window.addEventListener('load', () => {
