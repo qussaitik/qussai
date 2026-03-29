@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL-MOSIBA | المصيبة للتحميل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 35px;
+            padding: 40px 25px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h1 { font-size: 2.8rem; margin: 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        .description { font-size: 1.1rem; margin-bottom: 30px; font-weight: 600; opacity: 0.9; }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .btn-fetch {
+            background: #fff;
+            color: #e73c7e;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            width: 100%;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .results { display: none; margin-top: 30px; animation: slideUp 0.6s ease; }
+        
+        .dl-btn {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <h1>AL-MOSIBA</h1>
+    <p class="description">أسهل طريقة لتحميل فيديوهات تيك توك 🚀</p>
+    
+    <input type="text" id="targetUrl" placeholder="ضع رابط الفيديو هنا...">
+    <button class="btn-fetch" onclick="fetchData()">ابدأ التحميل الآن 🔥</button>
+
+    <div id="results" class="results">
+        <button class="dl-btn" onclick="downloadFile('v')">🎬 تحميل الفيديو (MP4)</button>
+        <button class="dl-btn" onclick="downloadFile('a')" style="background: rgba(255,255,255,0.15);">🎵 تحميل الصوت (MP3)</button>
+    </div>
+</div>
+
+<script>
+    let globalData = null;
+
+    async function fetchData() {
+        const url = document.getElementById('targetUrl').value;
+        const btn = document.querySelector('.btn-fetch');
+        if(!url.includes('tiktok.com')) return Swal.fire('تنبيه', 'حط رابط تيك توك صح يا وحش 😉', 'warning');
+
+        btn.innerText = "جاري السحب... ✨";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('https://www.tikwm.com/api/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ 'url': url, 'hd': 1 })
+            });
+            const json = await res.json();
+            if(json.data) {
+                globalData = json.data;
+                document.getElementById('results').style.display = 'block';
+                Swal.fire({ title: 'جاهز! ✨', icon: 'success', timer: 1000, showConfirmButton: false });
+            } else {
+                Swal.fire('خطأ', 'الرابط غير صحيح أو الفيديو محذوف', 'error');
+            }
+        } catch(e) { 
+            Swal.fire('خطأ', 'مشكلة في الاتصال بالسيرفر', 'error'); 
+        } finally { 
+            btn.innerText = "ابدأ التحميل الآن 🔥"; 
+            btn.disabled = false; 
+        }
+    }
+
+    async function downloadFile(type) {
+        const link = type === 'v' ? globalData.play : globalData.music;
+        Swal.fire({ title: 'يتم التحميل...', didOpen: () => { Swal.showLoading(); } });
+        
+        try {
+            const res = await fetch(link);
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Al-Mosiba-${Date.now()}.${type==='v'?'mp4':'mp3'}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            Swal.close();
+        } catch(e) {
+            Swal.fire('عفواً', 'جرب التحميل من متصفح آخر أو اضغط مطولاً على الزر', 'error');
+        }
+    }
+</script>
+
+</body>
+</html>
