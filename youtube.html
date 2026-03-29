@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL-MOSIBA | تحميل صوت من يوتيوب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(-45deg, #ff4b2b, #ff416c, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 35px;
+            padding: 40px 25px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h1 { font-size: 2.5rem; margin: 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
+        .description { font-size: 1.1rem; margin-bottom: 30px; font-weight: 600; opacity: 0.9; }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .btn-fetch {
+            background: #fff;
+            color: #ff416c;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            width: 100%;
+            font-weight: 800;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .results { display: none; margin-top: 30px; animation: slideUp 0.6s ease; }
+        
+        .dl-btn {
+            display: block;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <h1>AL-MOSIBA</h1>
+    <p class="description">تحويل فيديوهات يوتيوب إلى MP3 🎵</p>
+    
+    <input type="text" id="youtubeUrl" placeholder="ضع رابط اليوتيوب هنا...">
+    <button class="btn-fetch" onclick="convertYoutube()">تحويل الآن 🔥</button>
+
+    <div id="results" class="results">
+        <p id="videoTitle" style="font-size: 0.9rem; margin-bottom: 15px; font-weight: bold;"></p>
+        <button class="dl-btn" id="downloadBtn">📥 تحميل الملف (MP3)</button>
+    </div>
+</div>
+
+<script>
+    async function convertYoutube() {
+        const url = document.getElementById('youtubeUrl').value;
+        const btn = document.querySelector('.btn-fetch');
+        
+        if(!url.includes('youtube.com') && !url.includes('youtu.be')) {
+            return Swal.fire('تنبيه', 'حط رابط يوتيوب صح يا غالي 😉', 'warning');
+        }
+
+        btn.innerText = "جاري التحويل... ⏳";
+        btn.disabled = true;
+
+        // استخدام API خارجي للتحويل (تم استخدام محرك تحويل سريع)
+        const videoId = extractVideoId(url);
+        
+        try {
+            // ملاحظة: هذا الـ API تجريبي وسريع للتحميل المباشر
+            const downloadUrl = `https://api.vevioz.com/@api/button/mp3/${videoId}`;
+            
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('videoTitle').innerText = "تم تجهيز ملف الصوت بنجاح ✅";
+            
+            const dlBtn = document.getElementById('downloadBtn');
+            dlBtn.onclick = () => {
+                window.open(downloadUrl, '_blank');
+            };
+
+            Swal.fire({ title: 'تم التحويل! ✨', icon: 'success', timer: 1500, showConfirmButton: false });
+            
+        } catch(e) { 
+            Swal.fire('خطأ', 'فشل في سحب الفيديو، جرب رابط آخر', 'error'); 
+        } finally { 
+            btn.innerText = "تحويل الآن 🔥"; 
+            btn.disabled = false; 
+        }
+    }
+
+    function extractVideoId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length == 11) ? match[2] : null;
+    }
+</script>
+
+</body>
+</html>
