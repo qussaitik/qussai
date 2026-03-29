@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>المصيبه للتحميل</title>
+    <title>المصيبه | منصة الإهداءات الراقية</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -16,143 +18,67 @@
             --gold: #f1c40f;
         }
 
-        /* --- شاشة الترحيب الفخمة --- */
+        /* --- شاشة الترحيب --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             background: radial-gradient(circle at center, #1e1b40 0%, #0f0c29 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000000;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: 0; padding: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000000; transition: opacity 0.8s ease;
         }
-        .splash-content { 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-        .splash-logo {
-            width: 85%; /* تكبير اللوجو */
-            max-width: 350px;
-            height: auto;
-            animation: pulseGlow 2s infinite ease-in-out;
-            filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.6));
-        }
-        .splash-loader-bar {
-            width: 70%; /* تكبير شريط التحميل */
-            max-width: 250px;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            margin-top: 40px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .splash-progress {
-            width: 0%; height: 100%;
-            background: linear-gradient(90deg, #00d2ff, #9b59b6, #00d2ff);
-            background-size: 200% 100%;
-            animation: splashLoad 3s forwards linear, gradientMove 2s infinite linear;
-        }
-        .splash-loading-text {
-            font-family: 'Tajawal', sans-serif;
-            color: #fff; font-size: 16px; font-weight: 700; margin-top: 20px;
-            letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
+        .splash-logo { width: 80%; max-width: 300px; animation: pulseGlow 2s infinite ease-in-out; }
+        .splash-loader-bar { width: 60%; max-width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 20px; margin-top: 30px; overflow: hidden; }
+        .splash-progress { width: 0%; height: 100%; background: linear-gradient(90deg, #a29bfe, #6c5ce7); animation: splashLoad 3s forwards linear; }
 
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(108, 92, 231, 0.6)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(108, 92, 231, 0.9)); }
-        }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.03); opacity: 1; } }
         @keyframes splashLoad { 0% { width: 0%; } 100% { width: 100%; } }
-        @keyframes gradientMove { 0% { background-position: 100% 0%; } 100% { background-position: -100% 0%; } }
+
+        /* --- شريط الإهداء العلوي --- */
+        .live-ticker {
+            position: fixed; top: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(255, 255, 255, 0.03); border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; overflow: hidden; z-index: 99;
+            backdrop-filter: blur(15px);
+        }
+        #tickerText {
+            white-space: nowrap; font-size: 1.2rem; font-weight: 500; color: var(--gold);
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         /* --- الصفحة الرئيسية --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Tajawal', sans-serif; background: #0f0c29; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; color: white; margin:0; }
+        #portal-view { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: #0f0c29;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            color: white;
-        }
+        .brand-img { width: 100px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4)); margin-bottom: 10px; }
+        h1 { font-size: 35px; font-weight: 900; letter-spacing: 1px; color: #fff; margin-bottom: 5px; }
 
-        #portal-view {
-            width: 100%;
-            max-width: 500px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        /* كرت الإهداء */
+        .dedication-card {
+            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 30px; width: 100%; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: slideUp 1s ease-out;
         }
+        .dedication-card p { font-size: 14px; opacity: 0.7; margin-bottom: 20px; text-align: center; }
 
-        .main-logo {
-            text-align: center; margin-bottom: 40px;
+        input, textarea {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: #fff; margin-bottom: 12px;
+            text-align: center; font-family: 'Tajawal'; font-size: 0.95rem; outline: none; transition: 0.3s;
         }
+        input:focus, textarea:focus { border-color: var(--secondary); background: rgba(255,255,255,0.08); }
         
-        .brand-img {
-            width: 140px; /* تكبير اللوجو الرئيسي */
-            height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+        textarea { height: 90px; resize: none; }
+
+        .send-btn {
+            background: linear-gradient(135deg, #6c5ce7, #8e44ad); color: white; border: none; padding: 16px;
+            border-radius: 12px; width: 100%; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s;
         }
+        .send-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        .main-logo h1 {
-            font-size: 48px; /* تكبير العنوان */
-            font-weight: 900;
-            background: linear-gradient(to bottom, #fff, #a29bfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-
-        .portal-container {
-            display: flex; flex-direction: column; gap: 18px;
-            width: 100%;
-        }
-
-        .portal-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 22px; border-radius: 28px;
-            display: flex; align-items: center; gap: 20px;
-            cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(15px);
-            text-decoration: none;
-            color: white;
-        }
-
-        .portal-card:hover {
-            background: rgba(108, 92, 231, 0.25);
-            transform: scale(1.03);
-            border-color: var(--primary);
-        }
-
-        .icon-box {
-            width: 65px; height: 65px; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: white;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-        }
-
-        .tiktok-bg { background: linear-gradient(45deg, #6c5ce7, #a29bfe); }
-        .youtube-bg { background: linear-gradient(45deg, #ff4b2b, #ff416c); }
-        .soon-bg { background: linear-gradient(45deg, #444, #222); }
-
-        .card-text h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-        .card-text p { font-size: 13px; opacity: 0.8; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        .portal-container { animation: slideUp 1s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -160,62 +86,73 @@
     <div id="splash-screen">
         <div class="splash-content">
             <img src="shaqi.png" alt="AL-MOSIBA" class="splash-logo">
-            <div class="splash-loader-bar">
-                <div class="splash-progress"></div>
-            </div>
-            <p class="splash-loading-text">تحميل عالم المصيبة...</p>
+            <div class="splash-loader-bar"><div class="splash-progress"></div></div>
+            <p style="color:#fff; margin-top:15px; font-size: 14px; opacity: 0.8;">بانتظار لحظاتكم الجميلة...</p>
         </div>
+    </div>
+
+    <div class="live-ticker">
+        <div id="tickerText">نسعد باستقبال كلماتكم الطيبة هنا.. 🕊️</div>
     </div>
 
     <div id="portal-view">
         <div class="main-logo">
             <img src="shaqi.png" alt="Logo" class="brand-img">
             <h1>المصيبه</h1>
-            <p style="opacity: 0.8; font-size: 14px; letter-spacing: 3px; color: var(--gold); font-weight: bold;">🇵🇸 QUSSAI PALESTINE 🇵🇸</p>
+            <p style="color:var(--gold); font-weight:500; font-size:11px; letter-spacing:3px; margin-bottom:25px; opacity: 0.9;">مساحة للإهداءات الراقية</p>
         </div>
 
-        <div class="portal-container">
-            <a href="tiktok.html" class="portal-card">
-                <div class="icon-box tiktok-bg"><i class="fab fa-tiktok"></i></div>
-                <div class="card-text">
-                    <h3>تيك توك</h3>
-                    <p>تحميل فيديوهات بدون علامة مائية</p>
-                </div>
-            </a>
-
-            <a href="youtube.html" class="portal-card">
-                <div class="icon-box youtube-bg"><i class="fab fa-youtube"></i></div>
-                <div class="card-text">
-                    <h3>يوتيوب MP3</h3>
-                    <p>تحويل سريع بجودة عالية جداً</p>
-                </div>
-            </a>
-
-            <div class="portal-card" style="cursor: default; opacity: 0.5;">
-                <div class="icon-box soon-bg"><i class="fas fa-lock"></i></div>
-                <div class="card-text">
-                    <h3>قريباً</h3>
-                    <p>خدمات حصرية قيد التطوير</p>
-                </div>
-            </div>
+        <div class="dedication-card">
+            <p>تفضل بكتابة اسمك ورسالتك لتظهر للجميع</p>
+            <input type="text" id="userName" placeholder="الاسم الكريم">
+            <textarea id="userMsg" placeholder="عبر عن إهدائك بكلمات راقية..."></textarea>
+            <button class="send-btn" onclick="sendDedication()">إرسال الإهداء الآن ✨</button>
         </div>
         
-        <p style="text-align: center; margin-top: 40px; font-size: 12px; opacity: 0.5; font-weight: 500;">
-            بواسطة قصي الفلسطيني &copy; 2026
+        <p style="text-align: center; margin-top: 30px; font-size: 11px; opacity: 0.4;">
+            مع تحيات قصي الفلسطيني &copy; 2026
         </p>
     </div>
 
     <script>
-        const splash = document.getElementById('splash-screen');
-        
-        // منع الإخفاء الفوري.. انتظر انتهاء انيميشن الشريط (3 ثواني)
+        // إعداد الرادار
+        const pubnub = new PubNub({
+            publishKey: 'demo', 
+            subscribeKey: 'demo',
+            uuid: "visitor_" + Math.random().toString(16).slice(2)
+        });
+
+        pubnub.subscribe({ channels: ['mosiba_elegant_v1'] });
+
+        pubnub.addListener({
+            message: function(s) {
+                const ticker = document.getElementById('tickerText');
+                ticker.style.animation = 'none';
+                ticker.innerText = `🕊️ إهداء من [ ${s.message.name} ]: ${s.message.msg} ✨`;
+                setTimeout(() => { ticker.style.animation = 'marquee 20s linear infinite'; }, 50);
+            }
+        });
+
+        function sendDedication() {
+            const name = document.getElementById('userName').value.trim();
+            const msg = document.getElementById('userMsg').value.trim();
+
+            if(!name || !msg) return Swal.fire({ title: 'عذراً', text: 'يرجى إكمال البيانات بلطف', icon: 'info', confirmButtonText: 'حسناً' });
+
+            pubnub.publish({
+                channel: 'mosiba_elegant_v1',
+                message: { name: name, msg: msg }
+            });
+
+            document.getElementById('userMsg').value = '';
+            Swal.fire({ title: 'شكراً لك', text: 'تم نشر كلماتك بنجاح', icon: 'success', timer: 1500, showConfirmButton: false });
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
-                if(splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 800);
-                }
-            }, 3200); // 3200ms عشان نضمن شريط التحميل وصل للآخر
+                const s = document.getElementById('splash-screen');
+                if(s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 800); }
+            }, 3200);
         });
     </script>
 </body>
